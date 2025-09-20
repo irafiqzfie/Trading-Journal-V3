@@ -106,7 +106,13 @@ export async function POST(request: Request) {
       },
     });
 
-    const jsonText = response.text.trim();
+    const text = response.text;
+    if (!text) {
+      console.error("Gemini API response was empty.", response);
+      throw new Error("Received an empty response from the AI service.");
+    }
+
+    const jsonText = text.trim();
     const parsedResult: AnalysisResult = JSON.parse(jsonText);
     
     return NextResponse.json(parsedResult);
