@@ -74,12 +74,13 @@ const HomePage: React.FC = () => {
         setFetchError(null);
         const response = await fetch('/api/positions');
         if (!response.ok) {
-          throw new Error('Failed to fetch positions from server.');
+          const errorData = await response.json().catch(() => ({ error: 'Failed to fetch positions from server.' }));
+          throw new Error(errorData.error || 'An unknown server error occurred.');
         }
         const data = await response.json();
         setPositions(data);
       } catch (error: any) {
-        setFetchError(error.message || 'An unknown error occurred.');
+        setFetchError(error.message || 'An unknown error occurred while fetching data.');
       } finally {
         setIsLoading(false);
       }

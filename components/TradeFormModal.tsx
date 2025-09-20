@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { Position, BuyTransaction, SellTransaction } from '../types';
-import { CloseIcon, CalendarIcon, ImageIcon, TrashIcon } from './Icons';
+import { CloseIcon, CalendarIcon, ImageIcon, TrashIcon, SparklesIcon } from './Icons';
 
 interface TradeFormModalProps {
   onClose: () => void;
@@ -78,6 +78,11 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
 
   const [imageTooltip, setImageTooltip] = useState<ImageTooltipState>({ visible: false, ChartComponent: null, chartImage: null, name: '', top: 0, left: 0, position: 'bottom' });
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+
+  // AI Second Opinion State
+  const [aiOpinion, setAiOpinion] = useState('');
+  const [isGeneratingOpinion, setIsGeneratingOpinion] = useState(false);
+  const [aiOpinionError, setAiOpinionError] = useState<string | null>(null);
 
 
   const avgBuyPrice = useMemo(() => {
@@ -467,6 +472,46 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
   const handleCloseTooltip = () => {
     setImageTooltip(prev => ({ ...prev, visible: false }));
   };
+
+  const handleGetAIOpinion = async () => {
+    if (!ticker || buyReason.length === 0 || !buyChartImage) return;
+
+    setIsGeneratingOpinion(true);
+    setAiOpinion('');
+    setAiOpinionError(null);
+
+    try {
+        const response = await fetch('/api/second-opinion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ticker,
+                buyReasons: buyReason,
+                chartImage: buyChartImage
+            }),
+        });
+
+        if (!response.ok || !response.body) {
+            const errorData = await response.json().catch(() => ({ error: 'Analysis request failed.' }));
+            throw new Error(errorData.error);
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value);
+            setAiOpinion(prev => prev + chunk);
+        }
+
+    } catch (error: any) {
+        setAiOpinionError(error.message || 'An unknown error occurred.');
+    } finally {
+        setIsGeneratingOpinion(false);
+    }
+  };
   
   const inputClasses = "mt-1 block w-full bg-black/30 border-2 border-white/20 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-accent focus:shadow-[0_0_0_3px_rgba(59,130,246,0.4)] transition-all duration-200 py-2 px-3";
 
@@ -706,7 +751,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                   id="positionNotes"
                   value={positionNotes}
                   onChange={e => setPositionNotes(e.target.value)}
-                  rows={6}
+                  rows={2}
                   className={inputClasses}
                   placeholder="e.g., Thesis for this trade, market sentiment, potential catalysts..."
                 />
@@ -726,7 +771,31 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                     fileInputRef={fileInputRef}
                     onDrop={(e) => handleDrop(e, setBuyChartImage)}
                 />
-            </div>
+              </div>
+              <div className="mt-4">
+                  <button
+                      type="button"
+                      onClick={handleGetAIOpinion}
+                      disabled={isGeneratingOpinion || !ticker || buyReason.length === 0 || !buyChartImage}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700 text-white font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                      <SparklesIcon className="h-5 w-5 text-yellow-300" />
+                      {isGeneratingOpinion ? 'Getting Opinion...' : 'Get AI Second Opinion'}
+                  </button>
+                  { (isGeneratingOpinion || aiOpinion || aiOpinionError) && (
+                      <div className="mt-4 p-4 bg-black/30 border border-white/10 rounded-lg animate-fade-in">
+                          {isGeneratingOpinion && !aiOpinion && (
+                              <p className="text-brand-text-secondary text-center">Generating analysis...</p>
+                          )}
+                          {aiOpinionError && (
+                              <p className="text-brand-loss text-center">{aiOpinionError}</p>
+                          )}
+                          {aiOpinion && (
+                              <div className="text-brand-text text-sm space-y-2" style={{ whiteSpace: 'pre-wrap' }}>{aiOpinion}</div>
+                          )}
+                      </div>
+                  )}
+              </div>
           </div>
         </div>
         <div className="mt-6">
