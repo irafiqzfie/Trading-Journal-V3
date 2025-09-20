@@ -64,14 +64,17 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
   const [sellReason, setSellReason] = useState<'TP' | 'Cut Loss' | ''>('');
   const [transactionNotes, setTransactionNotes] = useState('');
   const [sellChartImage, setSellChartImage] = useState<string | null>(null);
+  
+  // Image Upload State
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
   
   const [isSetupDropdownOpen, setIsSetupDropdownOpen] = useState(false);
   const [setupSearchTerm, setSetupSearchTerm] = useState('');
   const setupRef = useRef<HTMLDivElement>(null);
-  const buyFileInputRef = useRef<HTMLInputElement>(null);
-  const sellFileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [imageTooltip, setImageTooltip] = useState<ImageTooltipState>({ visible: false, ChartComponent: null, chartImage: null, name: '', top: 0, left: 0, position: 'bottom' });
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -361,52 +364,37 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
     }
   };
   
-  const processImageFile = (file: File | null, setter: React.Dispatch<React.SetStateAction<string | null>>, isBuyChart: boolean) => {
+  const handleFileUpload = async (file: File | null, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
       if (!file || !file.type.startsWith('image/')) return;
+      
+      setIsUploading(true);
+      setUploadError(null);
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-          const imageUrl = e.target?.result as string;
+      try {
+          const response = await fetch('/api/upload', {
+              method: 'POST',
+              headers: {
+                  'x-vercel-filename': file.name,
+                  'Content-Type': file.type,
+              },
+              body: file,
+          });
 
-          if (!isBuyChart) {
-              setter(imageUrl);
-              return;
+          if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || 'Upload failed');
           }
 
-          const img = new Image();
-          img.onload = () => {
-              const canvas = document.createElement('canvas');
-              const targetWidth = 500;
-              const targetHeight = 340;
-              canvas.width = targetWidth;
-              canvas.height = targetHeight;
-
-              const ctx = canvas.getContext('2d');
-              if (!ctx) {
-                  setter(imageUrl); // Fallback to original image
-                  return;
-              }
-              
-              // Stretch the image to fill the canvas, ignoring aspect ratio.
-              ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-
-              const resizedImageUrl = canvas.toDataURL(file.type);
-              setter(resizedImageUrl);
-          };
-          img.onerror = () => {
-              setter(imageUrl); // Fallback if image fails to load
-          };
-          img.src = imageUrl;
-      };
-      reader.readAsDataURL(file);
+          const newBlob = await response.json();
+          setter(newBlob.url);
+      } catch (error: any) {
+          console.error(error);
+          setUploadError(error.message);
+      } finally {
+          setIsUploading(false);
+      }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string | null>>, isBuyChart: boolean) => {
-      const file = e.target.files?.[0];
-      processImageFile(file || null, setter, isBuyChart);
-      if (e.target) e.target.value = ''; // Reset input
-  };
-  
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       e.stopPropagation();
@@ -419,12 +407,12 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
       setIsDraggingOver(false);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>, setter: React.Dispatch<React.SetStateAction<string | null>>, isBuyChart: boolean) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
       e.preventDefault();
       e.stopPropagation();
       setIsDraggingOver(false);
       const file = e.dataTransfer.files?.[0];
-      processImageFile(file || null, setter, isBuyChart);
+      handleFileUpload(file || null, setter);
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -432,7 +420,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
       for (let i = 0; i < items.length; i++) {
           if (items[i].type.indexOf('image') !== -1) {
               const file = items[i].getAsFile();
-              processImageFile(file, isSellMode ? setSellChartImage : setBuyChartImage, !isSellMode);
+              handleFileUpload(file, isSellMode ? setSellChartImage : setBuyChartImage);
               break; 
           }
       }
@@ -523,6 +511,68 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
       </div>
     );
   };
+  
+  const ImageDropzone = ({ chartImage, onImageChange, fileInputRef, onDrop }: {
+      chartImage: string | null;
+      onImageChange: (img: string | null) => void;
+      fileInputRef: React.RefObject<HTMLInputElement>;
+      onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
+  }) => (
+      <div className="mt-1 flex-grow">
+          {!chartImage ? (
+              <div
+                  onClick={() => !isUploading && fileInputRef.current?.click()}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={onDrop}
+                  className={`w-full h-full flex flex-col justify-center items-center border-2 border-dashed rounded-md transition-colors min-h-[12rem] ${isUploading ? 'cursor-not-allowed' : 'cursor-pointer'} ${isDraggingOver ? 'border-brand-accent bg-brand-accent/10 text-brand-accent' : 'border-white/20 text-brand-text-secondary hover:border-brand-accent hover:text-brand-accent'}`}
+              >
+                  {isUploading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-accent"></div>
+                        <span className="mt-2 text-sm font-semibold text-brand-accent">Uploading...</span>
+                      </>
+                  ) : uploadError ? (
+                      <div className="text-center p-2">
+                          <span className="font-semibold text-brand-loss">Upload Failed</span>
+                          <p className="text-xs text-red-400 mt-1">{uploadError}</p>
+                          <button type="button" onClick={() => setUploadError(null)} className="mt-2 text-xs text-brand-accent hover:underline">Try again</button>
+                      </div>
+                  ) : (
+                      <>
+                          <ImageIcon className="h-10 w-10" />
+                          <span className="mt-2 text-sm font-semibold">
+                              {isDraggingOver ? 'Drop image here' : 'Upload, drag, or paste'}
+                          </span>
+                      </>
+                  )}
+              </div>
+          ) : (
+              <div 
+                  className="relative group h-full"
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={onDrop}
+              >
+                  <img src={chartImage} alt="Chart preview" className="w-full h-full object-contain rounded-md bg-black/20" />
+                  <div className={`absolute inset-0 bg-black/60 flex flex-col justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity ${isDraggingOver || isUploading ? '!opacity-100' : ''}`}>
+                       {isUploading ? (
+                          <>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                            <span className="mt-2 text-sm font-semibold text-white">Uploading...</span>
+                          </>
+                        ) : isDraggingOver ? (
+                          <span className="text-white font-bold text-lg">Drop to replace</span>
+                        ) : (
+                          <button type="button" onClick={() => onImageChange(null)} className="p-2 text-brand-text-secondary hover:text-brand-loss bg-brand-surface/80 rounded-full">
+                              <TrashIcon />
+                          </button>
+                        )}
+                  </div>
+              </div>
+          )}
+      </div>
+  );
 
   const renderBuyForm = () => {
     const gliderClass = { 'S': 'translate-x-0', 'A+': 'translate-x-full', 'A': 'translate-x-[200%]' }[setupRating];
@@ -663,46 +713,19 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
               </div>
               <div className="flex-grow flex flex-col">
                 <label className="block text-sm font-medium text-brand-text-secondary">Chart Image (Optional)</label>
-                <input
+                 <input
                     type="file"
-                    ref={buyFileInputRef}
-                    onChange={(e) => handleImageUpload(e, setBuyChartImage, true)}
+                    ref={fileInputRef}
+                    onChange={(e) => handleFileUpload(e.target.files?.[0] || null, setBuyChartImage)}
                     accept="image/png, image/jpeg, image/gif"
                     className="hidden"
                 />
-                <div className="mt-1 flex-grow">
-                    {!buyChartImage ? (
-                        <div
-                            onClick={() => buyFileInputRef.current?.click()}
-                            onDragOver={handleDragOver}
-                            onDragLeave={handleDragLeave}
-                            onDrop={(e) => handleDrop(e, setBuyChartImage, true)}
-                            className={`w-full h-full flex flex-col justify-center items-center border-2 border-dashed rounded-md cursor-pointer transition-colors ${isDraggingOver ? 'border-brand-accent bg-brand-accent/10 text-brand-accent' : 'border-white/20 text-brand-text-secondary hover:border-brand-accent hover:text-brand-accent'}`}
-                        >
-                            <ImageIcon className="h-10 w-10" />
-                            <span className="mt-2 text-sm font-semibold">
-                                {isDraggingOver ? 'Drop image here' : 'Upload, drag, or paste an image'}
-                            </span>
-                        </div>
-                    ) : (
-                        <div 
-                            className="relative group h-full"
-                            onDragOver={handleDragOver}
-                            onDragLeave={handleDragLeave}
-                            onDrop={(e) => handleDrop(e, setBuyChartImage, true)}
-                        >
-                            <img src={buyChartImage} alt="Chart preview" className="w-full h-full object-fill rounded-md bg-black/20" />
-                            <div className={`absolute inset-0 bg-black/60 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity ${isDraggingOver ? '!opacity-100' : ''}`}>
-                                 {isDraggingOver && <span className="text-white font-bold text-lg">Drop to replace</span>}
-                                 {!isDraggingOver && (
-                                    <button type="button" onClick={() => setBuyChartImage(null)} className="p-2 text-brand-text-secondary hover:text-brand-loss bg-brand-surface/80 rounded-full">
-                                        <TrashIcon />
-                                    </button>
-                                 )}
-                            </div>
-                        </div>
-                    )}
-                </div>
+                <ImageDropzone 
+                    chartImage={buyChartImage}
+                    onImageChange={setBuyChartImage}
+                    fileInputRef={fileInputRef}
+                    onDrop={(e) => handleDrop(e, setBuyChartImage)}
+                />
             </div>
           </div>
         </div>
@@ -814,45 +837,18 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                 <div className="flex-grow flex flex-col">
                   <label className="block text-sm font-medium text-brand-text-secondary">Sell Chart (Optional)</label>
                   <input
-                      type="file"
-                      ref={sellFileInputRef}
-                      onChange={(e) => handleImageUpload(e, setSellChartImage, false)}
-                      accept="image/png, image/jpeg, image/gif"
-                      className="hidden"
-                  />
-                  <div className="mt-1 flex-grow">
-                      {!sellChartImage ? (
-                          <div
-                              onClick={() => sellFileInputRef.current?.click()}
-                              onDragOver={handleDragOver}
-                              onDragLeave={handleDragLeave}
-                              onDrop={(e) => handleDrop(e, setSellChartImage, false)}
-                              className={`w-full h-full flex flex-col justify-center items-center border-2 border-dashed rounded-md cursor-pointer transition-colors min-h-[12rem] ${isDraggingOver ? 'border-brand-accent bg-brand-accent/10 text-brand-accent' : 'border-white/20 text-brand-text-secondary hover:border-brand-accent hover:text-brand-accent'}`}
-                          >
-                              <ImageIcon className="h-10 w-10" />
-                              <span className="mt-2 text-sm font-semibold">
-                                  {isDraggingOver ? 'Drop image here' : 'Upload, drag, or paste'}
-                              </span>
-                          </div>
-                      ) : (
-                          <div 
-                              className="relative group h-full"
-                              onDragOver={handleDragOver}
-                              onDragLeave={handleDragLeave}
-                              onDrop={(e) => handleDrop(e, setSellChartImage, false)}
-                          >
-                              <img src={sellChartImage} alt="Sell chart preview" className="w-full h-full object-fill rounded-md bg-black/20" />
-                              <div className={`absolute inset-0 bg-black/60 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity ${isDraggingOver ? '!opacity-100' : ''}`}>
-                                   {isDraggingOver && <span className="text-white font-bold text-lg">Drop to replace</span>}
-                                   {!isDraggingOver && (
-                                      <button type="button" onClick={() => setSellChartImage(null)} className="p-2 text-brand-text-secondary hover:text-brand-loss bg-brand-surface/80 rounded-full">
-                                          <TrashIcon />
-                                      </button>
-                                   )}
-                              </div>
-                          </div>
-                      )}
-                  </div>
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={(e) => handleFileUpload(e.target.files?.[0] || null, setSellChartImage)}
+                    accept="image/png, image/jpeg, image/gif"
+                    className="hidden"
+                />
+                <ImageDropzone 
+                    chartImage={sellChartImage}
+                    onImageChange={setSellChartImage}
+                    fileInputRef={fileInputRef}
+                    onDrop={(e) => handleDrop(e, setSellChartImage)}
+                />
                 </div>
                 <div>
                   <label htmlFor="notes" className="block text-sm font-medium text-brand-text-secondary">Notes / Lesson Learnt (Optional)</label>
