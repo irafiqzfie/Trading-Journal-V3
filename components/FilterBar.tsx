@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Filters } from '../../types';
+import { Filters } from '../types';
 import { buySetups as allSetups } from './TradeFormModal';
 import { CloseIcon } from './Icons';
 

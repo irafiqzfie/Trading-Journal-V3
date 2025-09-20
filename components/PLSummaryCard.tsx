@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { SummaryIcon } from './Icons';
-import type { PLSummary } from '../../types';
+import type { PLSummary } from '../types';
 
 interface PLSummaryCardProps {
   summary: PLSummary;

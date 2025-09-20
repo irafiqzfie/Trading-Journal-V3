@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Position } from '../../types';
+import { Position } from '../types';
 import TradeItem from './TradeItem';
 
 interface TradeListProps {

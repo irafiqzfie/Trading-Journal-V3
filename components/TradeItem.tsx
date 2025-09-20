@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Position } from '../../types';
+import { Position } from '../types';
 import { TrashIcon, PencilIcon, ChevronDownIcon, DollarIcon, ImageIcon, CloseIcon, ChevronLeftIcon, ChevronRightIcon } from './Icons';
-import { getPositionStats } from '../../utils/tradeCalculations';
+import { getPositionStats } from '../utils/tradeCalculations';
 
 interface TradeItemProps {
   position: Position;

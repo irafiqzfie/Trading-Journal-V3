@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import type { KeyMetrics } from '../../types';
+import type { KeyMetrics } from '../types';
 import { CalculatorIcon } from './Icons';
 
 interface KeyMetricsCardProps {

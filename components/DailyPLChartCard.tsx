@@ -1,7 +1,7 @@
 
 
 import React, { useState, useMemo } from 'react';
-import type { Position } from '../../types';
+import type { Position } from '../types';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, CalendarStatsIcon } from './Icons';
 
 const daysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();

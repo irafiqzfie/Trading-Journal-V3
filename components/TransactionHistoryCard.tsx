@@ -1,7 +1,7 @@
 
 
 import React, { useState, useMemo } from 'react';
-import type { Position } from '../../types';
+import type { Position } from '../types';
 import { ChevronDownIcon, ClipboardListIcon } from './Icons';
 
 interface TransactionHistoryCardProps {

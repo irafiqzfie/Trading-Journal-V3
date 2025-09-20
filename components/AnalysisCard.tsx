@@ -1,6 +1,6 @@
 
 import React from 'react';
-import type { AnalysisResult } from '../../types';
+import type { AnalysisResult } from '../types';
 import { CheckCircleIcon, LightBulbIcon, ExclamationIcon, XCircleIcon, CloseIcon } from './Icons';
 
 interface AnalysisCardProps {

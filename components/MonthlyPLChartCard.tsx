@@ -1,7 +1,7 @@
 
 
 import React, { useState, useMemo } from 'react';
-import type { Position } from '../../types';
+import type { Position } from '../types';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChartIcon } from './Icons';
 
 const MonthlyPLChartCard: React.FC<{ positions: Position[] }> = ({ positions }) => {

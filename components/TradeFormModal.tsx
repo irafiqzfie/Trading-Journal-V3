@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import type { Position, BuyTransaction, SellTransaction } from '../../types';
+import type { Position, BuyTransaction, SellTransaction } from '../types';
 import { CloseIcon, CalendarIcon, ImageIcon, TrashIcon } from './Icons';
 
 interface TradeFormModalProps {
