@@ -15,7 +15,13 @@ export async function GET() {
     return NextResponse.json(positions || []);
   } catch (error) {
     console.error('Failed to fetch positions from Vercel KV:', error);
-    return NextResponse.json({ error: 'Failed to fetch data from the server.' }, { status: 500 });
+    // Enhanced logging for debugging environment variable issues
+    const urlIsSet = !!process.env.KV_REST_API_URL;
+    const tokenIsSet = !!process.env.KV_REST_API_TOKEN;
+    console.error(`KV Env Check: KV_REST_API_URL is ${urlIsSet ? 'set' : 'NOT SET'}. KV_REST_API_TOKEN is ${tokenIsSet ? 'set' : 'NOT SET'}.`);
+    
+    const errorMessage = "Failed to fetch data. This is likely an issue with the server's environment configuration for the database connection.";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
@@ -36,6 +42,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, message: 'Positions saved successfully.' });
   } catch (error) {
     console.error('Failed to save positions to Vercel KV:', error);
-    return NextResponse.json({ error: 'Failed to save data to the server.' }, { status: 500 });
+    // Enhanced logging for debugging environment variable issues
+    const urlIsSet = !!process.env.KV_REST_API_URL;
+    const tokenIsSet = !!process.env.KV_REST_API_TOKEN;
+    console.error(`KV Env Check: KV_REST_API_URL is ${urlIsSet ? 'set' : 'NOT SET'}. KV_REST_API_TOKEN is ${tokenIsSet ? 'set' : 'NOT SET'}.`);
+
+    const errorMessage = "Failed to save data. This is likely an issue with the server's environment configuration for the database connection.";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
