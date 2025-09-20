@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { Position, SellTransaction, BuyTransaction, AnalysisResult, PLSummary, KeyMetrics, Filters } from '../types';
 import Header from '../components/Header';
@@ -31,7 +31,10 @@ const initialFilters: Filters = {
 };
 
 const HomePage: React.FC = () => {
-  const [positions, setPositions] = useLocalStorage<Position[]>('positions', []);
+  const [positions, setPositions] = useState<Position[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [positionToSell, setPositionToSell] = useState<Position | null>(null);
   const [transactionToEdit, setTransactionToEdit] = useState<{
@@ -42,10 +45,13 @@ const HomePage: React.FC = () => {
   } | null>(null);
   const [positionToDeleteId, setPositionToDeleteId] = useState<string | null>(null);
 
-  const [equity, setEquity] = useState<string>('10000');
-  const [riskPercent, setRiskPercent] = useState<string>('2');
-  const [useDynamicEquity, setUseDynamicEquity] = useState<boolean>(true);
-
+  // Note: Settings for Equity/Risk and Custom Images are kept in localStorage
+  // as they are more like user preferences and less critical than trade data.
+  const [equity, setEquity] = useLocalStorage<string>('equity', '10000');
+  const [riskPercent, setRiskPercent] = useLocalStorage<string>('riskPercent', '2');
+  const [useDynamicEquity, setUseDynamicEquity] = useLocalStorage<boolean>('useDynamicEquity', true);
+  const [customSetupImages, setCustomSetupImages] = useLocalStorage<Record<string, string>>('customSetupImages', {});
+  
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
@@ -56,10 +62,51 @@ const HomePage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState<boolean>(false);
-  const [customSetupImages, setCustomSetupImages] = useLocalStorage<Record<string, string>>('customSetupImages', {});
 
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
+
+  // Fetch initial data from the server
+  useEffect(() => {
+    const fetchPositions = async () => {
+      try {
+        setIsLoading(true);
+        setFetchError(null);
+        const response = await fetch('/api/positions');
+        if (!response.ok) {
+          throw new Error('Failed to fetch positions from server.');
+        }
+        const data = await response.json();
+        setPositions(data);
+      } catch (error: any) {
+        setFetchError(error.message || 'An unknown error occurred.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPositions();
+  }, []);
+
+  // Function to save data to the server and update local state
+  const syncPositions = async (updatedPositions: Position[]) => {
+      setPositions(updatedPositions); // Optimistic UI update
+      try {
+          const response = await fetch('/api/positions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(updatedPositions),
+          });
+          if (!response.ok) {
+              console.error('Failed to sync positions with server.');
+              // Simple alert for now, could be replaced with a toast notification
+              alert('Error: Could not save changes to the server. Your data may be out of sync.');
+          }
+      } catch (error) {
+          console.error('Failed to sync positions:', error);
+          alert('Error: Could not save changes to the server. Your data may be out of sync.');
+      }
+  };
+
 
   const initialEquity = useMemo(() => {
     const equityNum = parseFloat(equity);
@@ -215,9 +262,11 @@ const HomePage: React.FC = () => {
     positionId?: string,
     transactionId?: string,
   ) => {
+    let updatedPositions: Position[];
+
     // EDIT Transaction
     if (positionId && transactionId) {
-       setPositions(prev => prev.map(p => {
+      updatedPositions = positions.map(p => {
         if (p.id === positionId) {
           const isBuy = 'buyPrice' in transactionData;
           if (isBuy) {
@@ -239,13 +288,12 @@ const HomePage: React.FC = () => {
           }
         }
         return p;
-      }));
+      });
     }
     // ADD Sell Transaction
     else if (positionId) {
         const { ...sellSpecificData } = transactionData;
-        setPositions(prevPositions =>
-            prevPositions.map(p => {
+        updatedPositions = positions.map(p => {
                 if (p.id === positionId) {
                     const newSell: SellTransaction = {
                         id: Date.now().toString(),
@@ -257,8 +305,7 @@ const HomePage: React.FC = () => {
                     };
                 }
                 return p;
-            })
-        );
+            });
     }
     // ADD New Buy Transaction / Position
     else {
@@ -270,31 +317,37 @@ const HomePage: React.FC = () => {
         buyChartImage: chartImage || null,
       };
 
-      setPositions(prevPositions => {
-        const existingPositionIndex = prevPositions.findIndex(p => p.ticker === ticker.toUpperCase());
-        
-        if (existingPositionIndex > -1) {
-          const { isClosed } = getPositionStats(prevPositions[existingPositionIndex]);
-          if (!isClosed) {
-            return prevPositions.map((p, index) => {
-              if (index === existingPositionIndex) {
-                return { ...p, buys: [...p.buys, newBuy] };
-              }
-              return p;
-            });
-          }
+      const existingPositionIndex = positions.findIndex(p => p.ticker === ticker.toUpperCase());
+      
+      if (existingPositionIndex > -1) {
+        const { isClosed } = getPositionStats(positions[existingPositionIndex]);
+        if (!isClosed) {
+          updatedPositions = positions.map((p, index) => {
+            if (index === existingPositionIndex) {
+              return { ...p, buys: [...p.buys, newBuy] };
+            }
+            return p;
+          });
+        } else {
+           const newPosition: Position = {
+              id: Date.now().toString(),
+              ticker: ticker.toUpperCase(),
+              buys: [newBuy],
+              sells: [],
+            };
+            updatedPositions = [newPosition, ...positions];
         }
-
+      } else {
         const newPosition: Position = {
           id: Date.now().toString(),
           ticker: ticker.toUpperCase(),
           buys: [newBuy],
           sells: [],
         };
-        return [newPosition, ...prevPositions];
-      });
+        updatedPositions = [newPosition, ...positions];
+      }
     }
-
+    syncPositions(updatedPositions);
     handleCloseModal();
   };
 
@@ -337,7 +390,8 @@ const HomePage: React.FC = () => {
 
   const handleConfirmDelete = () => {
     if (positionToDeleteId) {
-      setPositions(prevPositions => prevPositions.filter(p => p.id !== positionToDeleteId));
+      const updatedPositions = positions.filter(p => p.id !== positionToDeleteId);
+      syncPositions(updatedPositions);
       setPositionToDeleteId(null);
     }
   };
@@ -438,7 +492,7 @@ const HomePage: React.FC = () => {
 
     const handleConfirmImport = () => {
       if (dataToImport) {
-        setPositions(dataToImport);
+        syncPositions(dataToImport);
       }
       handleCancelImport();
     };
@@ -549,25 +603,39 @@ const HomePage: React.FC = () => {
                 />
             </div>
         )}
+        
+        {isLoading && (
+            <div className="text-center py-16 px-6 bg-brand-surface rounded-lg border border-white/10 shadow-lg">
+                <p className="text-brand-text-secondary">Loading trades from server...</p>
+            </div>
+        )}
+        {fetchError && (
+             <div className="text-center py-16 px-6 bg-red-900/20 text-red-300 rounded-lg border border-red-500/30 shadow-lg">
+                <h2 className="text-xl font-semibold text-white">Error Loading Data</h2>
+                <p>{fetchError}</p>
+            </div>
+        )}
 
-        <div className="animate-fade-in-up" style={{ animationDelay: '800ms' }}>
-            {isAnalysisVisible && (
-              <AnalysisCard 
-                analysis={analysis} 
-                isLoading={isAnalyzing} 
-                error={analysisError} 
-                onClose={handleCloseAnalysis} 
+        {!isLoading && !fetchError && (
+          <div className="animate-fade-in-up" style={{ animationDelay: '800ms' }}>
+              {isAnalysisVisible && (
+                <AnalysisCard 
+                  analysis={analysis} 
+                  isLoading={isAnalyzing} 
+                  error={analysisError} 
+                  onClose={handleCloseAnalysis} 
+                />
+              )}
+              
+              <TradeList 
+                positions={filteredPositions}
+                originalPositionsCount={positions.length}
+                onDelete={handleRequestDelete} 
+                onSell={handleOpenSellModal} 
+                onEdit={handleOpenEditModal} 
               />
-            )}
-            
-            <TradeList 
-              positions={filteredPositions}
-              originalPositionsCount={positions.length}
-              onDelete={handleRequestDelete} 
-              onSell={handleOpenSellModal} 
-              onEdit={handleOpenEditModal} 
-            />
-        </div>
+          </div>
+        )}
         
         <div className="animate-fade-in-up mt-8" style={{ animationDelay: '900ms' }}>
            <TransactionHistoryCard positions={filteredPositions} />

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/genai": "^1.17.0",
+    "@vercel/kv": "^2.0.0",
     "react": "^18",
     "react-dom": "^18",
     "next": "14.2.3"
