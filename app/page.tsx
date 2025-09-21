@@ -45,12 +45,11 @@ const HomePage: React.FC = () => {
   } | null>(null);
   const [positionToDeleteId, setPositionToDeleteId] = useState<string | null>(null);
 
-  // Note: Settings for Equity/Risk and Custom Images are kept in localStorage
-  // as they are more like user preferences and less critical than trade data.
+  // Note: Settings for Equity/Risk are kept in localStorage as they are more like user preferences.
   const [equity, setEquity] = useLocalStorage<string>('equity', '10000');
   const [riskPercent, setRiskPercent] = useLocalStorage<string>('riskPercent', '2');
   const [useDynamicEquity, setUseDynamicEquity] = useLocalStorage<boolean>('useDynamicEquity', true);
-  const [customSetupImages, setCustomSetupImages] = useLocalStorage<Record<string, string>>('customSetupImages', {});
+  const [customSetupImages, setCustomSetupImages] = useState<Record<string, string>>({});
   
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
@@ -68,24 +67,37 @@ const HomePage: React.FC = () => {
 
   // Fetch initial data from the server
   useEffect(() => {
-    const fetchPositions = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
         setFetchError(null);
-        const response = await fetch('/api/positions');
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: 'Failed to fetch positions from server.' }));
-          throw new Error(errorData.error || 'An unknown server error occurred.');
+
+        const [positionsRes, settingsRes] = await Promise.all([
+          fetch('/api/positions'),
+          fetch('/api/settings')
+        ]);
+
+        if (!positionsRes.ok) {
+          const errorData = await positionsRes.json().catch(() => ({ error: 'Failed to fetch positions from server.' }));
+          throw new Error(errorData.error || 'An unknown server error occurred while fetching positions.');
         }
-        const data = await response.json();
-        setPositions(data);
+        const positionsData = await positionsRes.json();
+        setPositions(positionsData);
+        
+        if (settingsRes.ok) {
+            const settingsData = await settingsRes.json();
+            setCustomSetupImages(settingsData);
+        } else {
+            console.error('Could not fetch custom image settings.');
+        }
+
       } catch (error: any) {
         setFetchError(error.message || 'An unknown error occurred while fetching data.');
       } finally {
         setIsLoading(false);
       }
     };
-    fetchPositions();
+    fetchData();
   }, []);
 
   // Function to save data to the server and update local state
@@ -105,6 +117,25 @@ const HomePage: React.FC = () => {
       } catch (error) {
           console.error('Failed to sync positions:', error);
           alert('Error: Could not save changes to the server. Your data may be out of sync.');
+      }
+  };
+
+  // Function to save custom images to the server and update local state
+  const syncCustomImages = async (updatedImages: Record<string, string>) => {
+      setCustomSetupImages(updatedImages); // Optimistic UI update
+      try {
+          const response = await fetch('/api/settings', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(updatedImages),
+          });
+          if (!response.ok) {
+              console.error('Failed to sync settings with server.');
+              alert('Error: Could not save your custom image settings.');
+          }
+      } catch (error) {
+          console.error('Failed to sync settings:', error);
+          alert('Error: Could not save your custom image settings.');
       }
   };
 
@@ -670,7 +701,7 @@ const HomePage: React.FC = () => {
                 isOpen={isSettingsModalOpen}
                 onClose={() => setIsSettingsModalOpen(false)}
                 customImages={customSetupImages}
-                onCustomImagesChange={setCustomSetupImages}
+                onCustomImagesChange={syncCustomImages}
             />
         )}
       </main>
