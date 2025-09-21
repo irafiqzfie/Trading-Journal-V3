@@ -2,6 +2,7 @@ import { kv } from '@vercel/kv';
 import { NextResponse } from 'next/server';
 import type { Position } from '../../../types';
 
+const NAMESPACE = process.env.APP_NAMESPACE || 'default';
 const POSITIONS_KEY = 'trading_journal_positions';
 
 /**
