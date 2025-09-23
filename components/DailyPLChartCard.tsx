@@ -1,6 +1,5 @@
 
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { Position } from '../types';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, CalendarStatsIcon } from './Icons';
 
@@ -9,6 +8,13 @@ const daysInMonth = (year: number, month: number) => new Date(year, month + 1, 0
 const DailyPLChartCard: React.FC<{ positions: Position[] }> = ({ positions }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        // This effect runs only on the client, after the component has mounted,
+        // preventing server-client mismatch (hydration error).
+        setIsClient(true);
+    }, []);
 
     const { days, totalMonthlyPL, yAxisMax, hasData } = useMemo(() => {
         const plByDate: { [date: string]: number } = {};
@@ -91,9 +97,15 @@ const DailyPLChartCard: React.FC<{ positions: Position[] }> = ({ positions }) =>
                     </div>
                      <div className="flex items-center gap-4">
                          {!isExpanded && (
-                            <p className="font-semibold text-lg">
-                                {monthYearLabel}: <span className={plColor}>RM{totalMonthlyPL.toFixed(2)}</span>
-                            </p>
+                            <div className="font-semibold text-lg min-h-[28px] flex items-center"> {/* Container to prevent layout shift */}
+                                {isClient ? (
+                                    <p>
+                                        {monthYearLabel}: <span className={plColor}>RM{totalMonthlyPL.toFixed(2)}</span>
+                                    </p>
+                                ) : (
+                                    <div className="w-48 h-7 bg-gray-700/50 rounded animate-pulse" />
+                                )}
+                            </div>
                          )}
                          <ChevronDownIcon className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                      </div>
