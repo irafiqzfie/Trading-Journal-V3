@@ -3,14 +3,13 @@ import { NextResponse } from 'next/server';
 import type { Position } from '../../../types';
 
 const NAMESPACE = process.env.APP_NAMESPACE || 'default';
-const POSITIONS_KEY = 'trading_journal_positions';
+const POSITIONS_KEY = `${NAMESPACE}:trading_journal_positions`;
 
 /**
  * Handles GET requests to fetch all trading positions from the KV store.
  */
 export async function GET() {
   try {
-    // @vercel/kv automatically uses UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
     const positions = await kv.get<Position[]>(POSITIONS_KEY);
     return NextResponse.json(positions || []);
   } catch (error) {
@@ -39,7 +38,7 @@ export async function POST(request: Request) {
     await kv.set(POSITIONS_KEY, positions);
     return NextResponse.json({
       success: true,
-      message: 'Positions saved successfully.'
+      message: `Positions saved successfully for namespace: ${NAMESPACE}`
     });
   } catch (error) {
     console.error('Failed to save positions to Vercel KV:', error);
