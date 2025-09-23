@@ -19,8 +19,8 @@ import TransactionHistoryCard from '../components/TransactionHistoryCard';
 import PLSummaryCard from '../components/PLSummaryCard';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import FilterBar from '../components/FilterBar';
-import LoginModal from '../components/LoginModal';
 import { getPositionStats } from '../utils/tradeCalculations';
+import LoginModal from '../components/LoginModal';
 
 const initialFilters: Filters = {
   ticker: '',
@@ -35,6 +35,8 @@ const HomePage: React.FC = () => {
   const [positions, setPositions] = useState<Position[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const [isAuthenticated, setIsAuthenticated] = useLocalStorage<boolean>('isAuthenticated', false);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [positionToSell, setPositionToSell] = useState<Position | null>(null);
@@ -62,11 +64,14 @@ const HomePage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState<boolean>(false);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
+
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   // Fetch initial data from the server
   useEffect(() => {
@@ -100,8 +105,12 @@ const HomePage: React.FC = () => {
         setIsLoading(false);
       }
     };
-    fetchData();
-  }, []);
+    if (isAuthenticated) {
+        fetchData();
+    } else {
+        setIsLoading(false);
+    }
+  }, [isAuthenticated]);
 
   // Function to save data to the server and update local state
   const syncPositions = async (updatedPositions: Position[]) => {
@@ -140,6 +149,16 @@ const HomePage: React.FC = () => {
           console.error('Failed to sync settings:', error);
           alert('Error: Could not save your custom image settings.');
       }
+  };
+  
+  const handleLogin = (id: string, pass: string) => {
+    console.log("Logging in with:", { id, pass });
+    // In a real app, you would verify credentials here.
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
   };
 
 
@@ -537,35 +556,28 @@ const HomePage: React.FC = () => {
       setIsImportConfirmOpen(false);
     };
 
-  const activeFilterCount = Object.values(filters).filter(value => {
-    if (typeof value === 'string' && value) return true;
-    if (Array.isArray(value) && value.length > 0) return true;
-    if (typeof value !== 'string' && typeof value !== 'object' && value !== 'all') return true;
+  const activeFilterCount = Object.entries(filters).filter(([key, value]) => {
+    if (key === 'setups') return Array.isArray(value) && value.length > 0;
+    if (typeof value === 'string' && value && value !== 'all') return true;
     return false;
   }).length;
+  
+  if (!hasMounted) {
+    return null; // or a loading spinner
+  }
+  
+  if (!isAuthenticated) {
+    return (
+        <div className="min-h-screen bg-brand-bg text-brand-text font-sans">
+            <LoginModal onLogin={handleLogin} />
+        </div>
+    );
+  }
 
-  const handleLogin = (id: string, pass: string): boolean => {
-    if (id === 'inafiq' && pass === '2024') {
-        setIsAuthenticated(true);
-        return true;
-    }
-    return false;
-  };
-
-  const handleLogout = () => {
-      setIsAuthenticated(false);
-  };
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans">
-      <Header
-        onExport={handleExportData}
-        onImport={() => fileInputRef.current?.click()}
-        onSettings={() => setIsSettingsModalOpen(true)}
-        isAuthenticated={isAuthenticated}
-        onLoginClick={() => setIsLoginModalOpen(true)}
-        onLogout={handleLogout}
-      />
+      <Header onExport={handleExportData} onImport={() => fileInputRef.current?.click()} onSettings={() => setIsSettingsModalOpen(true)} onLogout={handleLogout} isAuthenticated={isAuthenticated} />
       <main className="container mx-auto p-4 md:p-6 lg:p-8">
         <input
             type="file"
@@ -694,11 +706,6 @@ const HomePage: React.FC = () => {
            <TransactionHistoryCard positions={filteredPositions} />
         </div>
         
-        <LoginModal
-            isOpen={isLoginModalOpen}
-            onClose={() => setIsLoginModalOpen(false)}
-            onLogin={handleLogin}
-        />
         {isModalOpen && (
           <TradeFormModal
             onClose={handleCloseModal}

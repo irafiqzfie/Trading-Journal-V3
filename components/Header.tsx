@@ -1,16 +1,15 @@
 import React from 'react';
-import { LineChartIcon, ExportIcon, ImportIcon, SettingsIcon, LoginIcon, LogoutIcon } from './Icons';
+import { LineChartIcon, ExportIcon, ImportIcon, SettingsIcon } from './Icons';
 
 interface HeaderProps {
     onExport: () => void;
     onImport: () => void;
     onSettings: () => void;
-    isAuthenticated: boolean;
-    onLoginClick: () => void;
     onLogout: () => void;
+    isAuthenticated: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ onExport, onImport, onSettings, isAuthenticated, onLoginClick, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ onExport, onImport, onSettings, onLogout, isAuthenticated }) => {
   return (
     <header className="bg-brand-surface/80 backdrop-blur-sm border-b border-white/10 sticky top-0 z-40">
       <div className="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
@@ -42,24 +41,17 @@ const Header: React.FC<HeaderProps> = ({ onExport, onImport, onSettings, isAuthe
             >
               <ExportIcon className="h-5 w-5" />
             </button>
-            
-            {/* Login / Logout Button */}
-            {isAuthenticated ? (
-               <button
+            {isAuthenticated && (
+              <>
+                <div className="border-l border-white/20 h-6"></div>
+                <button
                   onClick={onLogout}
-                  className="p-2 text-brand-text-secondary rounded-full transition-colors hover:bg-slate-700 hover:text-white"
+                  className="px-3 py-1.5 text-sm bg-slate-700 text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-slate-600 hover:text-white"
                   title="Logout"
                 >
-                  <LogoutIcon className="h-5 w-5" />
+                  Logout
                 </button>
-            ) : (
-                <button
-                  onClick={onLoginClick}
-                  className="p-2 text-brand-text-secondary rounded-full transition-colors hover:bg-slate-700 hover:text-white"
-                  title="Login"
-                >
-                  <LoginIcon className="h-5 w-5" />
-                </button>
+              </>
             )}
         </div>
       </div>

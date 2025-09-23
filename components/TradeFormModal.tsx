@@ -1,8 +1,6 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { Position, BuyTransaction, SellTransaction } from '../types';
 import { CloseIcon, CalendarIcon, ImageIcon, TrashIcon } from './Icons';
-import { StandardBreakoutSVG, CheatBreakoutSVG, DTLBreakoutSVG, IPOBreakoutPNG } from './SetupChartSVGs';
 
 interface TradeFormModalProps {
   onClose: () => void;
@@ -27,13 +25,6 @@ export const buySetups = [
   { name: "Pullback Setup 6: Pullback Recent 52W/ATH/CWH B/O" },
   { name: "VCP Candlestick" },
 ];
-
-const setupChartComponents: Record<string, React.FC> = {
-  "Breakout Setup 1: Standard B/O -> 52W/ATH/CWH": StandardBreakoutSVG,
-  "Breakout Setup 2: Ranges at Cheat B/O": CheatBreakoutSVG,
-  "Breakout Setup 3: DTL B/O": DTLBreakoutSVG,
-  "Breakout Setup 4: IPO B/O": IPOBreakoutPNG,
-};
 
 
 interface ImageTooltipState {
@@ -437,9 +428,9 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
   const handleSetupTagClick = (event: React.MouseEvent, setupName: string) => {
     event.stopPropagation();
     const customImage = customSetupImages[setupName];
-    const ChartComponent = setupChartComponents[setupName] || null;
-
-    if (!ChartComponent && !customImage) return;
+    const setup = buySetups.find(s => s.name === setupName);
+    
+    if (!setup && !customImage) return;
 
     const rect = event.currentTarget.getBoundingClientRect();
     const tooltipWidth = 500;
@@ -463,7 +454,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
 
     setImageTooltip({
       visible: true,
-      ChartComponent: ChartComponent,
+      ChartComponent: null,
       chartImage: customImage || null,
       name: setupName,
       top,
@@ -619,16 +610,15 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                   <div className={`${inputClasses} flex flex-wrap items-center gap-2 min-h-[46px] cursor-text`} onClick={() => setupRef.current?.querySelector('input')?.focus()}>
                       {buyReason.map(setupName => {
                         const setupObject = buySetups.find(s => s.name === setupName);
-                        const hasChart = !!customSetupImages[setupName] || !!setupChartComponents[setupName];
                         return (
                           <div key={setupName} className="relative group">
-                              <span onClick={(e) => handleSetupTagClick(e, setupName)} role="button" tabIndex={0} className={`flex items-center gap-1.5 bg-brand-accent/50 text-white text-xs font-semibold pl-2.5 pr-1.5 py-1 rounded-full animate-fade-in ${hasChart ? 'cursor-pointer' : 'cursor-default'}`}>
+                              <span onClick={(e) => handleSetupTagClick(e, setupName)} role="button" tabIndex={0} className="flex items-center gap-1.5 bg-brand-accent/50 text-white text-xs font-semibold pl-2.5 pr-1.5 py-1 rounded-full animate-fade-in cursor-pointer">
                                   {setupName.split(':')[0]}
                                   <button type="button" onClick={(e) => { e.stopPropagation(); handleRemoveSetup(setupName); }} className="text-white/70 hover:text-white bg-white/10 rounded-full" aria-label={`Remove ${setupName}`}><CloseIcon className="h-3 w-3" /></button>
                               </span>
                               <div className="absolute bottom-full mb-2 w-max max-w-xs left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1.5 px-3 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30 shadow-lg whitespace-normal text-center">
                                   {setupName}
-                                  {hasChart && <span className="block text-brand-accent/80 text-[10px] mt-1">(Click tag for chart)</span>}
+                                  {(customSetupImages[setupName]) && <span className="block text-brand-accent/80 text-[10px] mt-1">(Click tag for chart)</span>}
                               </div>
                           </div>
                         )
