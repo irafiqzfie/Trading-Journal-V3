@@ -19,6 +19,7 @@ import TransactionHistoryCard from '../components/TransactionHistoryCard';
 import PLSummaryCard from '../components/PLSummaryCard';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import FilterBar from '../components/FilterBar';
+import LoginModal from '../components/LoginModal';
 import { getPositionStats } from '../utils/tradeCalculations';
 
 const initialFilters: Filters = {
@@ -61,6 +62,8 @@ const HomePage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState<boolean>(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
@@ -541,10 +544,28 @@ const HomePage: React.FC = () => {
     return false;
   }).length;
 
+  const handleLogin = (id: string, pass: string): boolean => {
+    if (id === 'inafiq' && pass === '2024') {
+        setIsAuthenticated(true);
+        return true;
+    }
+    return false;
+  };
+
+  const handleLogout = () => {
+      setIsAuthenticated(false);
+  };
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans">
-      <Header onExport={handleExportData} onImport={() => fileInputRef.current?.click()} onSettings={() => setIsSettingsModalOpen(true)} />
+      <Header
+        onExport={handleExportData}
+        onImport={() => fileInputRef.current?.click()}
+        onSettings={() => setIsSettingsModalOpen(true)}
+        isAuthenticated={isAuthenticated}
+        onLoginClick={() => setIsLoginModalOpen(true)}
+        onLogout={handleLogout}
+      />
       <main className="container mx-auto p-4 md:p-6 lg:p-8">
         <input
             type="file"
@@ -673,6 +694,11 @@ const HomePage: React.FC = () => {
            <TransactionHistoryCard positions={filteredPositions} />
         </div>
         
+        <LoginModal
+            isOpen={isLoginModalOpen}
+            onClose={() => setIsLoginModalOpen(false)}
+            onLogin={handleLogin}
+        />
         {isModalOpen && (
           <TradeFormModal
             onClose={handleCloseModal}
