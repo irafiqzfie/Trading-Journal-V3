@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
   --color-brand-bg: 15 23 42;
   --color-brand-surface: 23 37 84;
@@ -13,3 +9,7 @@
   --color-brand-profit: 74 222 128;
   --color-brand-loss: 248 113 113;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
