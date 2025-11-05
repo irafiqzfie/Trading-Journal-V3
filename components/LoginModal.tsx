@@ -40,13 +40,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLogin }) => {
     }
   }
 
-  const inputClasses = "mt-1 block w-full bg-gray-900/50 border-2 border-white/10 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-accent focus:shadow-[0_0_0_3px_rgba(251,146,60,0.4)] transition-all duration-200 py-2.5 px-4";
+  const inputClasses = "mt-1 block w-full bg-slate-900/50 border-2 border-slate-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(59,130,246,0.4)] transition-all duration-200 py-2.5 px-4";
   const errorInputClasses = "border-brand-loss focus:border-brand-loss focus:shadow-[0_0_0_3px_rgba(239,68,68,0.4)]";
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div 
-        className="bg-brand-surface backdrop-blur-md rounded-lg shadow-2xl p-6 w-full max-w-sm m-4 animate-slide-up-fade border border-white/10 relative"
+        className="bg-brand-surface rounded-lg shadow-2xl p-6 w-full max-w-sm m-4 animate-slide-up-fade border border-white/10 relative"
       >
         <div className="text-center mb-6">
             <LineChartIcon />
@@ -92,7 +92,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLogin }) => {
           <div className="mt-8">
             <button 
                 type="submit" 
-                className="w-full px-5 py-3 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 hover:bg-orange-600"
+                className="w-full px-5 py-3 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105"
             >
                 Log In
             </button>

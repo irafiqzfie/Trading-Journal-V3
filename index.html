@@ -6,31 +6,18 @@
     <title>AS Trading Journal</title>
     <style>
       :root {
-        --brand-bg: #111827;
-        --brand-surface: rgba(31, 41, 55, 0.5);
-        --brand-primary: #f97316;
-        --brand-secondary: #4b5563;
-        --brand-accent: #fb923c;
-        --brand-text: #f3f4f6;
-        --brand-text-secondary: #9ca3af;
-        --brand-profit: #22c55e;
-        --brand-loss: #ef4444;
+        --brand-bg: #0f172a;
+        --brand-surface: #1e3a8a;
+        --brand-primary: #3b82f6;
+        --brand-secondary: #60a5fa;
+        --brand-accent: #22d3ee;
+        --brand-text: #e2e8f0;
+        --brand-text-secondary: #94a3b8;
+        --brand-profit: #4ade80;
+        --brand-loss: #f87171;
       }
       body {
-        background-image: url('https://images.unsplash.com/photo-1600880292203-757bb62b4be3?q=80&w=2070&auto=format&fit=crop');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-      }
-      body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(17, 24, 39, 0.8);
-        z-index: -1;
+        background-color: var(--brand-bg);
       }
     </style>
     <script>
@@ -63,16 +50,16 @@
               },
                'value-flash': {
                 '0%, 100%': { 'background-color': 'rgba(0, 0, 0, 0.3)' },
-                '50%': { 'background-color': 'rgba(251, 146, 60, 0.2)' },
+                '50%': { 'background-color': 'rgba(34, 211, 238, 0.2)' },
               },
               'pulse-glow': {
                 '0%, 100%': { 
                   transform: 'scale(1)',
-                  'box-shadow': '0 0 8px rgba(249, 115, 22, 0.6), 0 0 15px rgba(249, 115, 22, 0.5)'
+                  'box-shadow': '0 0 8px rgba(59, 130, 246, 0.6), 0 0 15px rgba(59, 130, 246, 0.5)'
                 },
                 '50%': { 
                   transform: 'scale(1.05)',
-                  'box-shadow': '0 0 15px rgba(249, 115, 22, 0.7), 0 0 25px rgba(249, 115, 22, 0.6), 0 0 40px rgba(249, 115, 22, 0.2)'
+                  'box-shadow': '0 0 15px rgba(59, 130, 246, 0.7), 0 0 25px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.2)'
                 }
               },
                'background-pan': {

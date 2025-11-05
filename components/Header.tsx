@@ -11,7 +11,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onExport, onImport, onSettings, onLogout, isAuthenticated }) => {
   return (
-    <header className="bg-brand-surface/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-40">
+    <header className="bg-slate-900 border-b border-white/10 sticky top-0 z-40">
       <div className="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-3">
           <LineChartIcon />
@@ -46,7 +46,7 @@ const Header: React.FC<HeaderProps> = ({ onExport, onImport, onSettings, onLogou
                 <div className="border-l border-white/20 h-6"></div>
                 <button
                   onClick={onLogout}
-                  className="px-3 py-1.5 text-sm bg-brand-secondary text-brand-text font-semibold rounded-md transition-colors hover:bg-gray-600 hover:text-white"
+                  className="px-3 py-1.5 text-sm bg-brand-secondary text-white font-semibold rounded-md transition-colors hover:bg-blue-500"
                   title="Logout"
                 >
                   Logout

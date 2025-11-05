@@ -462,7 +462,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
     setImageTooltip(prev => ({ ...prev, visible: false }));
   };
   
-  const inputClasses = "mt-1 block w-full bg-gray-900/50 border-2 border-white/10 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-accent focus:shadow-[0_0_0_3px_rgba(251,146,60,0.4)] transition-all duration-200 py-2 px-3";
+  const inputClasses = "mt-1 block w-full bg-slate-900/50 border-2 border-slate-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(59,130,246,0.4)] transition-all duration-200 py-2 px-3";
 
   const filteredSetups = useMemo(() => buySetups.filter(s => !buyReason.includes(s.name) && s.name.toLowerCase().includes(setupSearchTerm.toLowerCase())), [buyReason, setupSearchTerm]);
   const handleAddSetup = (setupName: string) => { setBuyReason(prev => [...prev, setupName]); setSetupSearchTerm(''); };
@@ -519,7 +519,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={onDrop}
-                  className={`w-full h-full flex flex-col justify-center items-center border-2 border-dashed rounded-md transition-colors min-h-[12rem] ${isUploading ? 'cursor-not-allowed' : 'cursor-pointer'} ${isDraggingOver ? 'border-brand-accent bg-brand-accent/10 text-brand-accent' : 'border-white/20 text-brand-text-secondary hover:border-brand-accent hover:text-brand-accent'}`}
+                  className={`w-full h-full flex flex-col justify-center items-center border-2 border-dashed rounded-md transition-colors min-h-[12rem] ${isUploading ? 'cursor-not-allowed' : 'cursor-pointer'} ${isDraggingOver ? 'border-brand-accent bg-brand-accent/10 text-brand-accent' : 'border-slate-600 text-brand-text-secondary hover:border-brand-primary hover:text-brand-primary'}`}
               >
                   {isUploading ? (
                       <>
@@ -592,7 +592,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                  <div className="relative">
                   <input type="date" id="buyDate" value={buyDate} onChange={e => setBuyDate(e.target.value)} className={`${inputClasses} pr-24`} />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                     <button type="button" onClick={() => setBuyDate(new Date().toISOString().split('T')[0])} className="text-xs font-semibold text-brand-accent hover:text-orange-400 px-2 pointer-events-auto">TODAY</button>
+                     <button type="button" onClick={() => setBuyDate(new Date().toISOString().split('T')[0])} className="text-xs font-semibold text-brand-accent hover:text-cyan-400 px-2 pointer-events-auto">TODAY</button>
                      <CalendarIcon className="h-5 w-5 text-slate-400" />
                   </div>
                 </div>
@@ -608,7 +608,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                         const setupObject = buySetups.find(s => s.name === setupName);
                         return (
                           <div key={setupName} className="relative group">
-                              <span onClick={(e) => handleSetupTagClick(e, setupName)} role="button" tabIndex={0} className="flex items-center gap-1.5 bg-brand-accent/50 text-white text-xs font-semibold pl-2.5 pr-1.5 py-1 rounded-full animate-fade-in cursor-pointer">
+                              <span onClick={(e) => handleSetupTagClick(e, setupName)} role="button" tabIndex={0} className="flex items-center gap-1.5 bg-brand-primary/80 text-white text-xs font-semibold pl-2.5 pr-1.5 py-1 rounded-full animate-fade-in cursor-pointer">
                                   {setupName.split(':')[0]}
                                   <button type="button" onClick={(e) => { e.stopPropagation(); handleRemoveSetup(setupName); }} className="text-white/70 hover:text-white bg-white/10 rounded-full" aria-label={`Remove ${setupName}`}><CloseIcon className="h-3 w-3" /></button>
                               </span>
@@ -622,8 +622,8 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                       <input type="text" value={setupSearchTerm} onChange={e => setSetupSearchTerm(e.target.value)} onFocus={() => setIsSetupDropdownOpen(true)} placeholder={buyReason.length === 0 ? "Click to select setups..." : ""} className="bg-transparent outline-none flex-grow text-white p-0" />
                   </div>
                   {isSetupDropdownOpen && filteredSetups.length > 0 && (
-                      <div className="absolute z-20 mt-1 w-full bg-slate-800 border border-white/20 rounded-md shadow-lg max-h-60 overflow-y-auto animate-fade-in">
-                          <ul>{filteredSetups.map(setup => (<li key={setup.name} onClick={() => { handleAddSetup(setup.name); setIsSetupDropdownOpen(false); }} className="px-4 py-2 text-sm text-brand-text hover:bg-brand-accent/20 cursor-pointer">{setup.name}</li>))}</ul>
+                      <div className="absolute z-20 mt-1 w-full bg-slate-800 border border-slate-600 rounded-md shadow-lg max-h-60 overflow-y-auto animate-fade-in">
+                          <ul>{filteredSetups.map(setup => (<li key={setup.name} onClick={() => { handleAddSetup(setup.name); setIsSetupDropdownOpen(false); }} className="px-4 py-2 text-sm text-brand-text hover:bg-brand-primary/20 cursor-pointer">{setup.name}</li>))}</ul>
                       </div>
                   )}
               </div>
@@ -633,7 +633,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
             <div>
                 <label className="block text-sm font-medium text-brand-text-secondary mb-2">Setup Rating (Auto)</label>
                 <div className="relative flex bg-black/30 rounded-lg p-1 w-full">
-                    <div className={`absolute top-1 bottom-1 left-1 w-1/3 bg-brand-accent rounded-md transition-transform duration-300 ease-in-out shadow-lg shadow-brand-accent/30 ${gliderClass}`} />
+                    <div className={`absolute top-1 bottom-1 left-1 w-1/3 bg-brand-primary rounded-md transition-transform duration-300 ease-in-out shadow-lg shadow-brand-primary/30 ${gliderClass}`} />
                     <div className="relative z-10 flex-1 px-4 py-2 text-sm font-bold text-white text-center">S</div>
                     <div className="relative z-10 flex-1 px-4 py-2 text-sm font-bold text-white text-center">A+</div>
                     <div className="relative z-10 flex-1 px-4 py-2 text-sm font-bold text-white text-center">A</div>
@@ -670,7 +670,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                                 key={r}
                                 type="button"
                                 onClick={() => setSelectedR(r)}
-                                className={`relative inline-flex shrink-0 items-center justify-center p-2 w-14 border-2 border-r-0 border-white/20 text-sm font-semibold transition-colors focus:z-10 focus:outline-none focus:ring-2 focus:ring-brand-primary ${r === 1 ? 'rounded-l-md' : ''} ${selectedR === r ? 'bg-brand-primary text-white border-brand-primary z-10' : 'bg-black/40 text-brand-text-secondary hover:bg-white/10'}`}
+                                className={`relative inline-flex shrink-0 items-center justify-center p-2 w-14 border-2 border-r-0 border-slate-700 text-sm font-semibold transition-colors focus:z-10 focus:outline-none focus:ring-2 focus:ring-brand-primary ${r === 1 ? 'rounded-l-md' : ''} ${selectedR === r ? 'bg-brand-primary text-white border-brand-primary z-10' : 'bg-black/40 text-brand-text-secondary hover:bg-slate-700'}`}
                             >
                                 {r}R
                             </button>
@@ -748,12 +748,12 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                       <p className={calcValue}>{stopLossPercentage > 0 ? `${stopLossPercentage.toFixed(2)}%` : '-'}</p>
                   </div>
                   
-                  <div className={`${calcBoxBase} bg-brand-accent/20 col-span-2 sm:col-span-2 md:col-span-2`}>
-                    <label htmlFor="lotSize" className={`${calcLabel} text-orange-300`}>Lot Size</label>
+                  <div className={`${calcBoxBase} bg-brand-primary/20 col-span-2 sm:col-span-2 md:col-span-2`}>
+                    <label htmlFor="lotSize" className={`${calcLabel} text-blue-300`}>Lot Size</label>
                      {isEditing ? (
-                        <input id="lotSize" type="number" value={lotSize} onChange={e => setLotSize(e.target.value)} className="w-full bg-transparent text-center font-bold text-brand-accent text-xl outline-none" />
+                        <input id="lotSize" type="number" value={lotSize} onChange={e => setLotSize(e.target.value)} className="w-full bg-transparent text-center font-bold text-brand-primary text-xl outline-none" />
                      ) : (
-                      <p className="font-bold text-brand-accent text-xl">{lotSize || '0'}</p>
+                      <p className="font-bold text-brand-primary text-xl">{lotSize || '0'}</p>
                      )}
                   </div>
 
@@ -788,12 +788,12 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                   <label htmlFor="sellLotSize" className="block text-sm font-medium text-brand-text-secondary">Sell Lot Size</label>
                   <div className="relative mt-1">
                     <input type="number" id="sellLotSize" value={sellLotSize} onChange={e => setSellLotSize(e.target.value)} min="1" max={remainingLots} className={`${inputClasses} pr-28`} />
-                    <div className="absolute inset-y-0 right-0 flex items-center divide-x divide-white/20">
+                    <div className="absolute inset-y-0 right-0 flex items-center divide-x divide-slate-600">
                          <button type="button" onClick={() => {
                                 const halfLots = Math.floor(remainingLots / 2);
                                 if (halfLots > 0) setSellLotSize(halfLots.toString());
-                            }} className="px-3 text-xs font-bold text-brand-accent hover:text-orange-400" aria-label="Set half sell lot size">1/2</button>
-                        <button type="button" onClick={() => setSellLotSize(remainingLots.toString())} className="px-3 text-xs font-bold text-brand-accent hover:text-orange-400" aria-label="Set maximum sell lot size">MAX</button>
+                            }} className="px-3 text-xs font-bold text-brand-accent hover:text-cyan-400" aria-label="Set half sell lot size">1/2</button>
+                        <button type="button" onClick={() => setSellLotSize(remainingLots.toString())} className="px-3 text-xs font-bold text-brand-accent hover:text-cyan-400" aria-label="Set maximum sell lot size">MAX</button>
                     </div>
                   </div>
                   {errors.sellLotSize && <p className="text-red-400 text-xs mt-1">{errors.sellLotSize}</p>}
@@ -809,7 +809,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                 <div className="relative">
                     <input type="date" id="sellDate" value={sellDate} onChange={e => setSellDate(e.target.value)} className={`${inputClasses} pr-24`} />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <button type="button" onClick={() => setSellDate(new Date().toISOString().split('T')[0])} className="text-xs font-semibold text-brand-accent hover:text-orange-400 px-2 pointer-events-auto">TODAY</button>
+                        <button type="button" onClick={() => setSellDate(new Date().toISOString().split('T')[0])} className="text-xs font-semibold text-brand-accent hover:text-cyan-400 px-2 pointer-events-auto">TODAY</button>
                         <CalendarIcon className="h-5 w-5 text-slate-400" />
                     </div>
                   </div>
@@ -823,7 +823,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
               <div>
                 <label className="block text-sm font-medium text-brand-text-secondary mb-2">Sell Reason</label>
                 <div className="relative flex bg-black/30 rounded-lg p-1 w-full">
-                    <div className={`absolute top-1 bottom-1 left-1 w-1/2 bg-brand-accent rounded-md transition-all duration-300 ease-in-out shadow-lg shadow-brand-accent/30 ${sellReasonGliderClass}`} />
+                    <div className={`absolute top-1 bottom-1 left-1 w-1/2 bg-brand-primary rounded-md transition-all duration-300 ease-in-out shadow-lg shadow-brand-primary/30 ${sellReasonGliderClass}`} />
                     <button type="button" onClick={() => setSellReason('TP')} className="relative z-10 flex-1 px-4 py-2 text-sm font-semibold text-white">TP</button>
                     <button type="button" onClick={() => setSellReason('Cut Loss')} className="relative z-10 flex-1 px-4 py-2 text-sm font-semibold text-white">Cut Loss</button>
                 </div>
@@ -876,7 +876,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={onClose}>
       {renderImageTooltip()}
       <div 
-        className={`bg-brand-surface backdrop-blur-md rounded-lg shadow-2xl p-6 w-full ${isSellMode ? 'max-w-3xl' : 'max-w-4xl'} m-4 animate-slide-up-fade border border-white/10 max-h-[95vh] overflow-y-auto`} 
+        className={`bg-brand-surface rounded-lg shadow-2xl p-6 w-full ${isSellMode ? 'max-w-3xl' : 'max-w-4xl'} m-4 animate-slide-up-fade border border-white/10 max-h-[95vh] overflow-y-auto`} 
         onClick={e => e.stopPropagation()}
         onPaste={handlePaste}
       >
@@ -897,7 +897,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                     type="button"
                     onClick={() => onRequestSecondOpinion({ ticker, buyReasons: buyReason, chartImage: buyChartImage! })}
                     disabled={!canRequestSecondOpinion}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-brand-secondary text-brand-accent rounded-lg shadow-md transition-all duration-300 hover:enabled:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed group"
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-brand-secondary text-white rounded-lg shadow-md transition-all duration-300 hover:enabled:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed group"
                  >
                     <SparklesIcon className="h-5 w-5 transition-transform group-hover:enabled:rotate-12" />
                     Get Second Opinion
@@ -905,8 +905,8 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
               )}
             </div>
             <div className="flex items-center space-x-3">
-              <button type="button" onClick={onClose} className="px-5 py-2 bg-brand-secondary text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors">Cancel</button>
-              <button type="submit" className="px-5 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105">{saveButtonText}</button>
+              <button type="button" onClick={onClose} className="px-5 py-2 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-500 transition-colors">Cancel</button>
+              <button type="submit" className="px-5 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 hover:bg-blue-600">{saveButtonText}</button>
             </div>
           </div>
         </form>

@@ -157,7 +157,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
     if (position.sells.length === 0) {
       return 'from-orange-500 to-amber-500';
     }
-    return isProfit ? 'from-green-500/70 to-teal-400/70' : 'from-brand-loss/70 to-red-500/70';
+    return isProfit ? 'from-green-500/70 to-teal-400/70' : 'from-red-600/70 to-rose-500/70';
   }, [position.sells, isProfit]);
 
   return (
@@ -165,7 +165,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
       {modalImageUrl && (
         <ImageModal src={modalImageUrl} onClose={() => setModalImageUrl(null)} />
       )}
-      <div className="bg-brand-surface backdrop-blur-md rounded-lg shadow-lg transition-all duration-300 ease-in-out border border-white/10 relative overflow-hidden group hover:shadow-2xl hover:border-brand-accent/50 hover:-translate-y-1">
+      <div className="bg-brand-surface rounded-lg shadow-lg transition-all duration-300 ease-in-out border border-white/10 relative overflow-hidden group hover:shadow-2xl hover:border-brand-accent/50 hover:-translate-y-1">
         <div className={`absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b ${gradientColor} transition-all duration-500 group-hover:w-2.5`}></div>
         
         <div className="p-4 pl-6">
@@ -224,7 +224,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
               {!isClosed && (
                 <button
                     onClick={() => onSell(position)}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-brand-primary text-white text-base font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-orange-600 transform hover:scale-105"
+                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-brand-secondary text-white text-base font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-blue-500 transform hover:scale-105"
                     aria-label={`Sell from ${position.ticker}`}
                 >
                     <DollarIcon className="h-6 w-6" />
@@ -250,7 +250,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
            <div className="mt-2 pt-4 border-t border-white/10 animate-fade-in-up">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-2">
               {/* BUY SECTION */}
-              <div className="bg-brand-profit/5 rounded-lg border border-brand-profit/10 p-3">
+              <div className="bg-green-500/5 rounded-lg border border-green-500/10 p-3">
                   <div className="grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] gap-6">
                       {/* Column 1: Buy Chart */}
                       <div>
@@ -362,7 +362,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
 
 
               {/* SELL SECTION */}
-               <div className="bg-brand-loss/5 rounded-lg border border-brand-loss/10 grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] gap-6 p-3">
+               <div className="bg-red-500/5 rounded-lg border border-red-500/10 grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] gap-6 p-3">
                   {/* Column 3: Sell Chart */}
                   <div>
                     <h4 className="flex items-center gap-2 text-sm font-semibold text-white mb-2">

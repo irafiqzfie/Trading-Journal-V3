@@ -55,11 +55,11 @@ const FilterBar: React.FC<FilterBarProps> = ({ onApplyFilters, onClearFilters, i
         setFilters(prev => ({...prev, setups: prev.setups.filter(s => s !== setupToRemove)}));
     };
     
-    const inputClasses = "block w-full bg-black/30 border-2 border-white/10 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-accent focus:shadow-[0_0_0_3px_rgba(251,146,60,0.3)] transition-all duration-200 py-2 px-3 text-sm";
+    const inputClasses = "block w-full bg-slate-900/70 border-2 border-slate-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(59,130,246,0.3)] transition-all duration-200 py-2 px-3 text-sm";
     const labelClasses = "block text-xs font-medium text-brand-text-secondary mb-1";
     
     return (
-        <div className="bg-brand-surface backdrop-blur-md border border-white/10 rounded-lg p-4">
+        <div className="bg-brand-surface border border-white/10 rounded-lg p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                 {/* Ticker */}
                 <div>
@@ -135,7 +135,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onApplyFilters, onClearFilters, i
                         <div className={`${inputClasses} flex flex-wrap items-center gap-1 min-h-[42px] cursor-text pr-8`} onClick={() => setupRef.current?.querySelector('input')?.focus()}>
                             {filters.setups.length === 0 && !setupSearchTerm && <span className="text-brand-text-secondary">Any setup</span>}
                             {filters.setups.map(setupName => (
-                                <span key={setupName} className="flex items-center gap-1 bg-brand-accent/50 text-white text-xs font-semibold pl-2 pr-1 py-0.5 rounded-full animate-fade-in">
+                                <span key={setupName} className="flex items-center gap-1 bg-brand-primary/80 text-white text-xs font-semibold pl-2 pr-1 py-0.5 rounded-full animate-fade-in">
                                     {setupName.split(':')[0]}
                                     <button type="button" onClick={(e) => { e.stopPropagation(); handleRemoveSetup(setupName); }} className="text-white/70 hover:text-white bg-white/10 rounded-full" aria-label={`Remove ${setupName}`}><CloseIcon className="h-3 w-3" /></button>
                                 </span>
@@ -143,8 +143,8 @@ const FilterBar: React.FC<FilterBarProps> = ({ onApplyFilters, onClearFilters, i
                             <input type="text" value={setupSearchTerm} onChange={e => setSetupSearchTerm(e.target.value)} onFocus={() => setIsSetupDropdownOpen(true)} className="bg-transparent outline-none flex-grow text-white p-0 text-sm" />
                         </div>
                         {isSetupDropdownOpen && filteredSetups.length > 0 && (
-                            <div className="absolute z-20 mt-1 w-full bg-slate-800 border border-white/20 rounded-md shadow-lg max-h-48 overflow-y-auto animate-fade-in">
-                                <ul>{filteredSetups.map(setup => (<li key={setup.name} onClick={() => { handleAddSetup(setup.name); setIsSetupDropdownOpen(false); }} className="px-3 py-1.5 text-xs text-brand-text hover:bg-brand-accent/20 cursor-pointer">{setup.name}</li>))}</ul>
+                            <div className="absolute z-20 mt-1 w-full bg-slate-800 border border-slate-600 rounded-md shadow-lg max-h-48 overflow-y-auto animate-fade-in">
+                                <ul>{filteredSetups.map(setup => (<li key={setup.name} onClick={() => { handleAddSetup(setup.name); setIsSetupDropdownOpen(false); }} className="px-3 py-1.5 text-xs text-brand-text hover:bg-brand-primary/20 cursor-pointer">{setup.name}</li>))}</ul>
                             </div>
                         )}
                     </div>
@@ -152,8 +152,8 @@ const FilterBar: React.FC<FilterBarProps> = ({ onApplyFilters, onClearFilters, i
             </div>
 
             <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-white/10">
-                <button onClick={handleClear} className="px-4 py-2 text-sm font-semibold text-brand-text-secondary rounded-md hover:bg-brand-secondary transition-colors">Clear</button>
-                <button onClick={handleApply} className="px-4 py-2 text-sm font-semibold text-white bg-brand-primary rounded-md hover:bg-orange-600 transition-colors">Apply Filters</button>
+                <button onClick={handleClear} className="px-4 py-2 text-sm font-semibold text-brand-text-secondary rounded-md hover:bg-slate-700 transition-colors">Clear</button>
+                <button onClick={handleApply} className="px-4 py-2 text-sm font-semibold text-white bg-brand-primary rounded-md hover:bg-blue-600 transition-colors">Apply Filters</button>
             </div>
         </div>
     );

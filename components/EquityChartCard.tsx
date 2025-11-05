@@ -124,7 +124,7 @@ const EquityChartCard: React.FC<EquityChartCardProps> = ({ positions, initialEqu
 
     return (
         <div
-          className="bg-brand-surface backdrop-blur-md rounded-lg shadow-lg border border-white/10 relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
+          className="bg-brand-surface rounded-lg shadow-lg border border-white/10 relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
           onClick={() => setIsExpanded(!isExpanded)}
           role="button"
           aria-expanded={isExpanded}

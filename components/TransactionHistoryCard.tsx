@@ -43,7 +43,7 @@ const TransactionHistoryCard: React.FC<TransactionHistoryCardProps> = ({ positio
 
     return (
         <div
-          className="bg-brand-surface backdrop-blur-md rounded-lg shadow-lg border border-white/10 relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
+          className="bg-brand-surface rounded-lg shadow-lg border border-white/10 relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
           onClick={() => setIsExpanded(!isExpanded)}
           role="button"
           aria-expanded={isExpanded}
@@ -80,7 +80,7 @@ const TransactionHistoryCard: React.FC<TransactionHistoryCardProps> = ({ positio
                                         <tr key={tx.id} className="border-b border-white/10 hover:bg-white/5">
                                             <td className="px-4 py-3 font-mono">{new Date(tx.date).toLocaleDateString('en-GB')}</td>
                                             <td className="px-4 py-3 font-semibold text-white">{tx.ticker}</td>
-                                            <td className={`px-4 py-3 font-bold ${tx.type === 'buy' ? 'text-brand-profit' : 'text-brand-accent'}`}>
+                                            <td className={`px-4 py-3 font-bold ${tx.type === 'buy' ? 'text-brand-profit' : 'text-brand-loss'}`}>
                                                 {tx.type.toUpperCase()}
                                             </td>
                                             <td className="px-4 py-3 text-right font-mono text-white">{tx.lotSize}</td>
