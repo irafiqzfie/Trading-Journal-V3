@@ -9,13 +9,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'brand-bg': '#0f172a',
-        'brand-surface': '#172554',
-        'brand-primary': '#3b82f6',
-        'brand-secondary': '#60a5fa',
-        'brand-accent': '#22d3ee',
-        'brand-text': '#e2e8f0',
-        'brand-text-secondary': '#94a3b8',
+        'brand-bg': '#1c1917',
+        'brand-surface': '#292524',
+        'brand-primary': '#f97316',
+        'brand-secondary': '#fb923c',
+        'brand-accent': '#f97316',
+        'brand-text': '#f5f5f4',
+        'brand-text-secondary': '#a8a29e',
         'brand-profit': '#4ade80',
         'brand-loss': '#f87171',
       },
@@ -38,17 +38,17 @@ const config: Config = {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
          'value-flash': {
-          '0%, 100%': { 'background-color': 'transparent' },
-          '50%': { 'background-color': 'rgba(34, 211, 238, 0.2)' },
+          '0%, 100%': { 'background-color': 'rgba(0, 0, 0, 0.3)' },
+          '50%': { 'background-color': 'rgba(249, 115, 22, 0.2)' },
         },
         'pulse-glow': {
           '0%, 100%': {
             transform: 'scale(1)',
-            'box-shadow': '0 0 8px rgba(59, 130, 246, 0.6), 0 0 15px rgba(59, 130, 246, 0.5)'
+            'box-shadow': '0 0 8px rgba(249, 115, 22, 0.6), 0 0 15px rgba(249, 115, 22, 0.5)'
           },
           '50%': {
             transform: 'scale(1.05)',
-            'box-shadow': '0 0 15px rgba(59, 130, 246, 0.7), 0 0 25px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.2)'
+            'box-shadow': '0 0 15px rgba(249, 115, 22, 0.7), 0 0 25px rgba(249, 115, 22, 0.6), 0 0 40px rgba(249, 115, 22, 0.2)'
           }
         },
          'background-pan': {
