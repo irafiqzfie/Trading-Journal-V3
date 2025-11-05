@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
@@ -21,6 +22,7 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import FilterBar from '../components/FilterBar';
 import { getPositionStats } from '../utils/tradeCalculations';
 import LoginModal from '../components/LoginModal';
+import SecondOpinionModal from '../components/SecondOpinionModal';
 
 const initialFilters: Filters = {
   ticker: '',
@@ -69,6 +71,14 @@ const HomePage: React.FC = () => {
   const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
 
   const [hasMounted, setHasMounted] = useState(false);
+
+  // State for Second Opinion Modal
+  const [isSecondOpinionModalOpen, setIsSecondOpinionModalOpen] = useState(false);
+  const [secondOpinionData, setSecondOpinionData] = useState<{ ticker: string; buyReasons: string[]; chartImage: string; } | null>(null);
+  const [secondOpinionAnalysis, setSecondOpinionAnalysis] = useState('');
+  const [isSecondOpinionLoading, setIsSecondOpinionLoading] = useState(false);
+  const [secondOpinionError, setSecondOpinionError] = useState<string | null>(null);
+
   useEffect(() => {
     setHasMounted(true);
   }, []);
@@ -562,6 +572,48 @@ const HomePage: React.FC = () => {
     return false;
   }).length;
   
+  const handleRequestSecondOpinion = async (data: { ticker: string; buyReasons: string[]; chartImage: string; }) => {
+    setSecondOpinionData(data);
+    setIsSecondOpinionModalOpen(true);
+    setIsSecondOpinionLoading(true);
+    setSecondOpinionAnalysis('');
+    setSecondOpinionError(null);
+
+    try {
+      const response = await fetch('/api/second-opinion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok || !response.body) {
+        const errorData = await response.json().catch(() => ({ error: "An unknown error occurred" }));
+        throw new Error(errorData.error || 'Failed to get a response from the server.');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value);
+        setSecondOpinionAnalysis(prev => prev + chunk);
+      }
+
+    } catch (error: any) {
+      setSecondOpinionError(error.message);
+    } finally {
+      setIsSecondOpinionLoading(false);
+    }
+  };
+
+  const handleCloseSecondOpinionModal = () => {
+    setIsSecondOpinionModalOpen(false);
+    setSecondOpinionData(null);
+    setSecondOpinionAnalysis('');
+    setSecondOpinionError(null);
+  };
+
   if (!hasMounted) {
     return null; // or a loading spinner
   }
@@ -714,6 +766,19 @@ const HomePage: React.FC = () => {
             transactionToEdit={transactionToEdit}
             baseRiskAmount={baseRiskAmount}
             customSetupImages={customSetupImages}
+            onRequestSecondOpinion={handleRequestSecondOpinion}
+          />
+        )}
+        {secondOpinionData && (
+          <SecondOpinionModal
+            isOpen={isSecondOpinionModalOpen}
+            onClose={handleCloseSecondOpinionModal}
+            ticker={secondOpinionData.ticker}
+            buyReasons={secondOpinionData.buyReasons}
+            chartImage={secondOpinionData.chartImage}
+            analysis={secondOpinionAnalysis}
+            isLoading={isSecondOpinionLoading}
+            error={secondOpinionError}
           />
         )}
         {positionToDeleteId && (

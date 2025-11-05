@@ -55,11 +55,11 @@ const FilterBar: React.FC<FilterBarProps> = ({ onApplyFilters, onClearFilters, i
         setFilters(prev => ({...prev, setups: prev.setups.filter(s => s !== setupToRemove)}));
     };
     
-    const inputClasses = "block w-full bg-black/30 border-2 border-white/20 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-accent focus:shadow-[0_0_0_3px_rgba(14,165,233,0.3)] transition-all duration-200 py-2 px-3 text-sm";
+    const inputClasses = "block w-full bg-black/30 border-2 border-white/10 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-accent focus:shadow-[0_0_0_3px_rgba(251,146,60,0.3)] transition-all duration-200 py-2 px-3 text-sm";
     const labelClasses = "block text-xs font-medium text-brand-text-secondary mb-1";
     
     return (
-        <div className="bg-brand-surface border border-white/10 rounded-lg p-4">
+        <div className="bg-brand-surface backdrop-blur-md border border-white/10 rounded-lg p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                 {/* Ticker */}
                 <div>
@@ -152,8 +152,8 @@ const FilterBar: React.FC<FilterBarProps> = ({ onApplyFilters, onClearFilters, i
             </div>
 
             <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-white/10">
-                <button onClick={handleClear} className="px-4 py-2 text-sm font-semibold text-brand-text-secondary rounded-md hover:bg-slate-700 transition-colors">Clear</button>
-                <button onClick={handleApply} className="px-4 py-2 text-sm font-semibold text-white bg-brand-primary rounded-md hover:bg-blue-500 transition-colors">Apply Filters</button>
+                <button onClick={handleClear} className="px-4 py-2 text-sm font-semibold text-brand-text-secondary rounded-md hover:bg-brand-secondary transition-colors">Clear</button>
+                <button onClick={handleApply} className="px-4 py-2 text-sm font-semibold text-white bg-brand-primary rounded-md hover:bg-orange-600 transition-colors">Apply Filters</button>
             </div>
         </div>
     );

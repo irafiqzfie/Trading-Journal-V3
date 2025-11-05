@@ -1,3 +1,4 @@
+
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from 'next/server';
 
@@ -14,11 +15,15 @@ function iteratorToStream(iterator: AsyncGenerator<any>) {
     const encoder = new TextEncoder();
     return new ReadableStream({
         async pull(controller) {
-            const { value, done } = await iterator.next();
-            if (done) {
-                controller.close();
-            } else {
-                controller.enqueue(encoder.encode(value.text));
+            try {
+                const { value, done } = await iterator.next();
+                if (done) {
+                    controller.close();
+                } else {
+                    controller.enqueue(encoder.encode(value.text));
+                }
+            } catch(e) {
+                controller.error(e)
             }
         },
     });

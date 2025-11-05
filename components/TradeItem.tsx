@@ -155,7 +155,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
 
   const gradientColor = useMemo(() => {
     if (position.sells.length === 0) {
-      return 'from-brand-accent to-brand-secondary';
+      return 'from-orange-500 to-amber-500';
     }
     return isProfit ? 'from-green-500/70 to-teal-400/70' : 'from-brand-loss/70 to-red-500/70';
   }, [position.sells, isProfit]);
@@ -165,7 +165,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
       {modalImageUrl && (
         <ImageModal src={modalImageUrl} onClose={() => setModalImageUrl(null)} />
       )}
-      <div className="bg-brand-surface rounded-lg shadow-lg transition-all duration-300 ease-in-out border border-white/10 relative overflow-hidden group hover:shadow-2xl hover:border-brand-accent/50 hover:-translate-y-1">
+      <div className="bg-brand-surface backdrop-blur-md rounded-lg shadow-lg transition-all duration-300 ease-in-out border border-white/10 relative overflow-hidden group hover:shadow-2xl hover:border-brand-accent/50 hover:-translate-y-1">
         <div className={`absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b ${gradientColor} transition-all duration-500 group-hover:w-2.5`}></div>
         
         <div className="p-4 pl-6">
@@ -224,7 +224,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
               {!isClosed && (
                 <button
                     onClick={() => onSell(position)}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-brand-accent text-white text-base font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-cyan-500 transform hover:scale-105"
+                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-brand-primary text-white text-base font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-orange-600 transform hover:scale-105"
                     aria-label={`Sell from ${position.ticker}`}
                 >
                     <DollarIcon className="h-6 w-6" />

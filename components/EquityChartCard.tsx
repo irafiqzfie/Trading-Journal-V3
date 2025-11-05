@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useMemo } from 'react';
 import type { Position } from '../types';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, LineChartIcon } from './Icons';
@@ -103,9 +104,9 @@ const EquityChartCard: React.FC<EquityChartCardProps> = ({ positions, initialEqu
                                  <line key={`grid-${label.value}`} x1={padding} y1={label.y} x2={width - padding} y2={label.y} stroke="rgba(255, 255, 255, 0.1)" strokeDasharray="2,2" />
                             ))}
                             
-                            <path d={linePath} fill="none" stroke="var(--color-brand-accent)" strokeWidth="2" />
+                            <path d={linePath} fill="none" stroke="var(--brand-accent)" strokeWidth="2" />
                             {dataPoints.map((p, i) => (
-                              <circle key={i} cx={getX(p.date)} cy={getY(p.equity)} r="3" fill="var(--color-brand-accent)" className="transition-all hover:r-5">
+                              <circle key={i} cx={getX(p.date)} cy={getY(p.equity)} r="3" fill="var(--brand-accent)" className="transition-all hover:r-5">
                                 <title>{p.date.toLocaleDateString()}: RM{p.equity.toFixed(2)}</title>
                               </circle>
                             ))}
@@ -123,12 +124,12 @@ const EquityChartCard: React.FC<EquityChartCardProps> = ({ positions, initialEqu
 
     return (
         <div
-          className="bg-brand-surface rounded-lg shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
+          className="bg-brand-surface backdrop-blur-md rounded-lg shadow-lg border border-white/10 relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
           onClick={() => setIsExpanded(!isExpanded)}
           role="button"
           aria-expanded={isExpanded}
         >
-            <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-brand-accent to-brand-secondary transition-all duration-500 group-hover:w-2.5"></div>
+            <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-brand-accent to-brand-primary transition-all duration-500 group-hover:w-2.5"></div>
             <div className="p-4 pl-6">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">

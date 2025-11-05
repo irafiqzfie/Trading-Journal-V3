@@ -4,6 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AS Trading Journal</title>
+    <style>
+      :root {
+        --brand-bg: #111827;
+        --brand-surface: rgba(31, 41, 55, 0.5);
+        --brand-primary: #f97316;
+        --brand-secondary: #4b5563;
+        --brand-accent: #fb923c;
+        --brand-text: #f3f4f6;
+        --brand-text-secondary: #9ca3af;
+        --brand-profit: #22c55e;
+        --brand-loss: #ef4444;
+      }
+      body {
+        background-image: url('https://images.unsplash.com/photo-1600880292203-757bb62b4be3?q=80&w=2070&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(17, 24, 39, 0.8);
+        z-index: -1;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-bg': 'var(--brand-bg)',
+              'brand-surface': 'var(--brand-surface)',
+              'brand-primary': 'var(--brand-primary)',
+              'brand-secondary': 'var(--brand-secondary)',
+              'brand-accent': 'var(--brand-accent)',
+              'brand-text': 'var(--brand-text)',
+              'brand-text-secondary': 'var(--brand-text-secondary)',
+              'brand-profit': 'var(--brand-profit)',
+              'brand-loss': 'var(--brand-loss)',
+            },
+            keyframes: {
+              'fade-in': {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              'fade-in-up': {
+                 '0%': { opacity: '0', transform: 'translateY(20px)' },
+                 '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'slide-up-fade': {
+                '0%': { opacity: '0', transform: 'translateY(1rem)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+               'value-flash': {
+                '0%, 100%': { 'background-color': 'rgba(0, 0, 0, 0.3)' },
+                '50%': { 'background-color': 'rgba(251, 146, 60, 0.2)' },
+              },
+              'pulse-glow': {
+                '0%, 100%': { 
+                  transform: 'scale(1)',
+                  'box-shadow': '0 0 8px rgba(249, 115, 22, 0.6), 0 0 15px rgba(249, 115, 22, 0.5)'
+                },
+                '50%': { 
+                  transform: 'scale(1.05)',
+                  'box-shadow': '0 0 15px rgba(249, 115, 22, 0.7), 0 0 25px rgba(249, 115, 22, 0.6), 0 0 40px rgba(249, 115, 22, 0.2)'
+                }
+              },
+               'background-pan': {
+                '0%': { 'background-position': '0% 50%' },
+                '50%': { 'background-position': '100% 50%' },
+                '100%': { 'background-position': '0% 50%' },
+               },
+               'tooltip-pop': {
+                '0%': { opacity: '0', transform: 'scale(0.95) translateY(var(--tooltip-translate-y))' },
+                '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+               }
+            },
+            animation: {
+              'fade-in': 'fade-in 0.5s ease-out forwards',
+              'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
+              'slide-up-fade': 'slide-up-fade 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+              'value-flash': 'value-flash 0.5s ease-in-out forwards',
+              'pulse-glow': 'pulse-glow 2s infinite ease-in-out',
+              'background-pan': 'background-pan 15s ease infinite',
+              'tooltip-pop': 'tooltip-pop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            }
+          },
+        },
+      }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="importmap">
 {

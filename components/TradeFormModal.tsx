@@ -1,6 +1,8 @@
+
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { Position, BuyTransaction, SellTransaction } from '../types';
-import { CloseIcon, CalendarIcon, ImageIcon, TrashIcon } from './Icons';
+import { CloseIcon, CalendarIcon, ImageIcon, TrashIcon, SparklesIcon } from './Icons';
 
 interface TradeFormModalProps {
   onClose: () => void;
@@ -14,6 +16,7 @@ interface TradeFormModalProps {
   } | null;
   baseRiskAmount: number;
   customSetupImages: Record<string, string>;
+  onRequestSecondOpinion: (data: { ticker: string; buyReasons: string[]; chartImage: string; }) => void;
 }
 
 export const buySetups = [
@@ -38,7 +41,7 @@ interface ImageTooltipState {
 }
 
 
-const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positionToSellFrom, transactionToEdit, baseRiskAmount, customSetupImages }) => {
+const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positionToSellFrom, transactionToEdit, baseRiskAmount, customSetupImages, onRequestSecondOpinion }) => {
   const isEditing = !!transactionToEdit;
   const isSellMode = (isEditing && transactionToEdit.type === 'sell') || (!isEditing && !!positionToSellFrom);
 
@@ -363,36 +366,28 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
     }
   };
   
-  const handleFileUpload = async (file: File | null, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
-      if (!file || !file.type.startsWith('image/')) return;
-      
-      setIsUploading(true);
-      setUploadError(null);
+  const handleFileUpload = (file: File, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
+    if (!file || !file.type.startsWith('image/')) return;
 
-      try {
-          const response = await fetch('/api/upload', {
-              method: 'POST',
-              headers: {
-                  'x-vercel-filename': file.name,
-                  'Content-Type': file.type,
-              },
-              body: file,
-          });
+    setIsUploading(true);
+    setUploadError(null);
 
-          if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.error || 'Upload failed');
-          }
-
-          const newBlob = await response.json();
-          setter(newBlob.url);
-      } catch (error: any) {
-          console.error(error);
-          setUploadError(error.message);
-      } finally {
-          setIsUploading(false);
-      }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+            setter(reader.result);
+        } else {
+            setUploadError("Failed to read file as a data URL.");
+        }
+        setIsUploading(false);
+    };
+    reader.onerror = () => {
+        setUploadError("Error reading the selected file.");
+        setIsUploading(false);
+    };
+    reader.readAsDataURL(file);
   };
+
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
@@ -411,7 +406,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
       e.stopPropagation();
       setIsDraggingOver(false);
       const file = e.dataTransfer.files?.[0];
-      handleFileUpload(file || null, setter);
+      if (file) handleFileUpload(file, setter);
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -419,7 +414,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
       for (let i = 0; i < items.length; i++) {
           if (items[i].type.indexOf('image') !== -1) {
               const file = items[i].getAsFile();
-              handleFileUpload(file, isSellMode ? setSellChartImage : setBuyChartImage);
+              if (file) handleFileUpload(file, isSellMode ? setSellChartImage : setBuyChartImage);
               break; 
           }
       }
@@ -467,7 +462,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
     setImageTooltip(prev => ({ ...prev, visible: false }));
   };
   
-  const inputClasses = "mt-1 block w-full bg-black/30 border-2 border-white/20 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-accent focus:shadow-[0_0_0_3px_rgba(59,130,246,0.4)] transition-all duration-200 py-2 px-3";
+  const inputClasses = "mt-1 block w-full bg-gray-900/50 border-2 border-white/10 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-accent focus:shadow-[0_0_0_3px_rgba(251,146,60,0.4)] transition-all duration-200 py-2 px-3";
 
   const filteredSetups = useMemo(() => buySetups.filter(s => !buyReason.includes(s.name) && s.name.toLowerCase().includes(setupSearchTerm.toLowerCase())), [buyReason, setupSearchTerm]);
   const handleAddSetup = (setupName: string) => { setBuyReason(prev => [...prev, setupName]); setSetupSearchTerm(''); };
@@ -579,6 +574,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
     const calcLabel = "text-xs text-slate-400 block";
     const calcValue = "font-semibold text-white text-lg";
     const riskValue = "font-semibold text-brand-accent text-lg";
+    const canRequestSecondOpinion = ticker && buyReason.length > 0 && buyChartImage;
 
     return (
       <>
@@ -596,7 +592,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                  <div className="relative">
                   <input type="date" id="buyDate" value={buyDate} onChange={e => setBuyDate(e.target.value)} className={`${inputClasses} pr-24`} />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                     <button type="button" onClick={() => setBuyDate(new Date().toISOString().split('T')[0])} className="text-xs font-semibold text-brand-accent hover:text-cyan-400 px-2 pointer-events-auto">TODAY</button>
+                     <button type="button" onClick={() => setBuyDate(new Date().toISOString().split('T')[0])} className="text-xs font-semibold text-brand-accent hover:text-orange-400 px-2 pointer-events-auto">TODAY</button>
                      <CalendarIcon className="h-5 w-5 text-slate-400" />
                   </div>
                 </div>
@@ -674,7 +670,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                                 key={r}
                                 type="button"
                                 onClick={() => setSelectedR(r)}
-                                className={`relative inline-flex shrink-0 items-center justify-center p-2 w-14 border-2 border-r-0 border-white/20 text-sm font-semibold transition-colors focus:z-10 focus:outline-none focus:ring-2 focus:ring-brand-accent ${r === 1 ? 'rounded-l-md' : ''} ${selectedR === r ? 'bg-brand-accent text-white border-brand-accent z-10' : 'bg-black/40 text-brand-text-secondary hover:bg-white/10'}`}
+                                className={`relative inline-flex shrink-0 items-center justify-center p-2 w-14 border-2 border-r-0 border-white/20 text-sm font-semibold transition-colors focus:z-10 focus:outline-none focus:ring-2 focus:ring-brand-primary ${r === 1 ? 'rounded-l-md' : ''} ${selectedR === r ? 'bg-brand-primary text-white border-brand-primary z-10' : 'bg-black/40 text-brand-text-secondary hover:bg-white/10'}`}
                             >
                                 {r}R
                             </button>
@@ -715,7 +711,10 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                  <input
                     type="file"
                     ref={fileInputRef}
-                    onChange={(e) => handleFileUpload(e.target.files?.[0] || null, setBuyChartImage)}
+                    onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleFileUpload(file, setBuyChartImage)
+                    }}
                     accept="image/png, image/jpeg, image/gif"
                     className="hidden"
                 />
@@ -750,7 +749,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                   </div>
                   
                   <div className={`${calcBoxBase} bg-brand-accent/20 col-span-2 sm:col-span-2 md:col-span-2`}>
-                    <label htmlFor="lotSize" className={`${calcLabel} text-cyan-300`}>Lot Size</label>
+                    <label htmlFor="lotSize" className={`${calcLabel} text-orange-300`}>Lot Size</label>
                      {isEditing ? (
                         <input id="lotSize" type="number" value={lotSize} onChange={e => setLotSize(e.target.value)} className="w-full bg-transparent text-center font-bold text-brand-accent text-xl outline-none" />
                      ) : (
@@ -793,8 +792,8 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                          <button type="button" onClick={() => {
                                 const halfLots = Math.floor(remainingLots / 2);
                                 if (halfLots > 0) setSellLotSize(halfLots.toString());
-                            }} className="px-3 text-xs font-bold text-brand-accent hover:text-cyan-400" aria-label="Set half sell lot size">1/2</button>
-                        <button type="button" onClick={() => setSellLotSize(remainingLots.toString())} className="px-3 text-xs font-bold text-brand-accent hover:text-cyan-400" aria-label="Set maximum sell lot size">MAX</button>
+                            }} className="px-3 text-xs font-bold text-brand-accent hover:text-orange-400" aria-label="Set half sell lot size">1/2</button>
+                        <button type="button" onClick={() => setSellLotSize(remainingLots.toString())} className="px-3 text-xs font-bold text-brand-accent hover:text-orange-400" aria-label="Set maximum sell lot size">MAX</button>
                     </div>
                   </div>
                   {errors.sellLotSize && <p className="text-red-400 text-xs mt-1">{errors.sellLotSize}</p>}
@@ -810,7 +809,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                 <div className="relative">
                     <input type="date" id="sellDate" value={sellDate} onChange={e => setSellDate(e.target.value)} className={`${inputClasses} pr-24`} />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <button type="button" onClick={() => setSellDate(new Date().toISOString().split('T')[0])} className="text-xs font-semibold text-brand-accent hover:text-cyan-400 px-2 pointer-events-auto">TODAY</button>
+                        <button type="button" onClick={() => setSellDate(new Date().toISOString().split('T')[0])} className="text-xs font-semibold text-brand-accent hover:text-orange-400 px-2 pointer-events-auto">TODAY</button>
                         <CalendarIcon className="h-5 w-5 text-slate-400" />
                     </div>
                   </div>
@@ -838,7 +837,10 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
                   <input
                     type="file"
                     ref={fileInputRef}
-                    onChange={(e) => handleFileUpload(e.target.files?.[0] || null, setSellChartImage)}
+                    onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if(file) handleFileUpload(file, setSellChartImage)
+                    }}
                     accept="image/png, image/jpeg, image/gif"
                     className="hidden"
                 />
@@ -868,12 +870,13 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
 
   const modalTitle = `${isEditing ? 'Edit' : 'Add'} ${isSellMode ? 'Sell Transaction' : 'New Trade'}`;
   const saveButtonText = `${isEditing ? 'Update' : 'Save'} ${isSellMode ? 'Sell' : 'Trade'}`;
+  const canRequestSecondOpinion = !isSellMode && !isEditing && !!ticker && buyReason.length > 0 && !!buyChartImage;
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={onClose}>
       {renderImageTooltip()}
       <div 
-        className={`bg-brand-surface rounded-lg shadow-2xl p-6 w-full ${isSellMode ? 'max-w-3xl' : 'max-w-4xl'} m-4 animate-slide-up-fade border border-white/10 max-h-[95vh] overflow-y-auto`} 
+        className={`bg-brand-surface backdrop-blur-md rounded-lg shadow-2xl p-6 w-full ${isSellMode ? 'max-w-3xl' : 'max-w-4xl'} m-4 animate-slide-up-fade border border-white/10 max-h-[95vh] overflow-y-auto`} 
         onClick={e => e.stopPropagation()}
         onPaste={handlePaste}
       >
@@ -887,9 +890,24 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
           
           {isSellMode ? renderSellForm() : renderBuyForm()}
 
-          <div className="flex justify-end pt-6 space-x-3 border-t border-white/10 mt-6">
-            <button type="button" onClick={onClose} className="px-5 py-2 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-500 transition-colors">Cancel</button>
-            <button type="submit" className="px-5 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105">{saveButtonText}</button>
+          <div className="flex justify-between items-center pt-6 border-t border-white/10 mt-6">
+            <div>
+              {!isSellMode && !isEditing && (
+                 <button
+                    type="button"
+                    onClick={() => onRequestSecondOpinion({ ticker, buyReasons: buyReason, chartImage: buyChartImage! })}
+                    disabled={!canRequestSecondOpinion}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-brand-secondary text-brand-accent rounded-lg shadow-md transition-all duration-300 hover:enabled:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed group"
+                 >
+                    <SparklesIcon className="h-5 w-5 transition-transform group-hover:enabled:rotate-12" />
+                    Get Second Opinion
+                 </button>
+              )}
+            </div>
+            <div className="flex items-center space-x-3">
+              <button type="button" onClick={onClose} className="px-5 py-2 bg-brand-secondary text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors">Cancel</button>
+              <button type="submit" className="px-5 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105">{saveButtonText}</button>
+            </div>
           </div>
         </form>
       </div>

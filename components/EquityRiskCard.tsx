@@ -1,4 +1,5 @@
 
+
 import React, { useMemo } from 'react';
 import { ShieldIcon, DollarIcon } from './Icons';
 
@@ -31,11 +32,11 @@ const EquityRiskCard: React.FC<EquityRiskCardProps> = ({
     return 0;
   }, [equity, riskPercent, useDynamicEquity, currentEquity]);
 
-  const inputClasses = "block w-full bg-black/30 border-2 border-white/20 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-accent transition-all p-2 text-lg";
+  const inputClasses = "block w-full bg-gray-900/50 border-2 border-white/10 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-accent transition-all p-2 text-lg";
 
   return (
-    <div className="bg-brand-surface rounded-lg shadow-lg py-6 pr-6 pl-8 border border-white/10 backdrop-blur-sm h-full flex flex-col relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50">
-      <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-brand-accent to-brand-secondary transition-all duration-500 group-hover:w-2.5"></div>
+    <div className="bg-brand-surface backdrop-blur-md rounded-lg shadow-lg py-6 pr-6 pl-8 border border-white/10 h-full flex flex-col relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50">
+      <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-brand-accent to-brand-primary transition-all duration-500 group-hover:w-2.5"></div>
       <div className="flex items-center gap-3 mb-4">
         <ShieldIcon className="text-brand-accent h-7 w-7" />
         <h2 className="text-xl font-bold text-white">Equity & Risk Management</h2>
@@ -47,7 +48,7 @@ const EquityRiskCard: React.FC<EquityRiskCardProps> = ({
         </span>
         <button
           onClick={() => onUseDynamicEquityChange(!useDynamicEquity)}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-brand-surface focus:ring-brand-accent ${useDynamicEquity ? 'bg-brand-accent' : 'bg-gray-600'}`}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-brand-surface focus:ring-brand-primary ${useDynamicEquity ? 'bg-brand-primary' : 'bg-gray-600'}`}
           role="switch"
           aria-checked={useDynamicEquity}
           aria-label="Toggle dynamic equity for risk calculation"

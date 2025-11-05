@@ -347,16 +347,14 @@ const App: React.FC = () => {
   
   if (!isAuthenticated) {
     return (
-        <div className="min-h-screen bg-brand-bg text-brand-text font-sans">
-            <div className="fixed top-0 left-0 w-full h-full -z-10 bg-[linear-gradient(45deg,#0a0f1e,#1e3a8a,#3b82f6,#1e3a8a,#0a0f1e)] bg-[size:400%_400%] animate-background-pan"></div>
+        <div className="min-h-screen text-brand-text font-sans">
             <LoginModal onLogin={handleLogin} />
         </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text font-sans">
-        <div className="fixed top-0 left-0 w-full h-full -z-10 bg-[linear-gradient(45deg,#0a0f1e,#1e3a8a,#3b82f6,#1e3a8a,#0a0f1e)] bg-[size:400%_400%] animate-background-pan"></div>
+    <div className="min-h-screen text-brand-text font-sans">
         <Header onExport={handleExportData} onImport={() => fileInputRef.current?.click()} onSettings={() => setIsSettingsModalOpen(true)} onLogout={handleLogout} isAuthenticated={isAuthenticated} />
         <main className="container mx-auto p-4 md:p-6 lg:p-8">
             <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
@@ -373,15 +371,15 @@ const App: React.FC = () => {
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <div className="flex flex-wrap items-center gap-4">
                     <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">My Positions</h1>
-                    <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-slate-800 text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-slate-700 hover:text-white">
+                    <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-brand-surface text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-gray-700 hover:text-white">
                         <FilterIcon className="h-4 w-4" />
                         <span>Filter</span>
-                        {activeFilterCount > 0 && <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white">{activeFilterCount}</span>}
+                        {activeFilterCount > 0 && <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-white text-xs font-bold">{activeFilterCount}</span>}
                     </button>
                     <div className="hidden sm:block border-l border-white/20 h-8"></div>
                     <div className="flex gap-3">
-                        <button onClick={handleAnalyze} disabled={isAnalyzing || filteredPositions.length < 1} className="px-4 py-2 bg-transparent border-2 border-brand-accent text-brand-accent font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-brand-accent hover:text-white disabled:opacity-40">Analyze Habits</button>
-                        <button onClick={handleOpenAddModal} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105"><PlusIcon /> Add Trade</button>
+                        <button onClick={handleAnalyze} disabled={isAnalyzing || filteredPositions.length < 1} className="px-4 py-2 bg-transparent border-2 border-brand-primary text-brand-primary font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-brand-primary hover:text-white disabled:opacity-40">Analyze Habits</button>
+                        <button onClick={handleOpenAddModal} className="flex items-center gap-2 px-4 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105"><PlusIcon /> Add Trade</button>
                     </div>
                 </div>
                 <div>

@@ -9,15 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'brand-bg': '#0a0f1e',
-        'brand-surface': 'rgba(18, 24, 40, 0.75)',
-        'brand-primary': '#3b82f6',
-        'brand-secondary': '#60a5fa',
-        'brand-accent': '#22d3ee',
-        'brand-text': '#e2e8f0',
-        'brand-text-secondary': '#94a3b8',
-        'brand-profit': '#4ade80',
-        'brand-loss': '#f87171',
+        'brand-bg': 'rgb(var(--color-brand-bg) / <alpha-value>)',
+        'brand-surface': 'rgb(var(--color-brand-surface) / <alpha-value>)',
+        'brand-primary': 'rgb(var(--color-brand-primary) / <alpha-value>)',
+        'brand-secondary': 'rgb(var(--color-brand-secondary) / <alpha-value>)',
+        'brand-accent': 'rgb(var(--color-brand-accent) / <alpha-value>)',
+        'brand-text': 'rgb(var(--color-brand-text) / <alpha-value>)',
+        'brand-text-secondary': 'rgb(var(--color-brand-text-secondary) / <alpha-value>)',
+        'brand-profit': 'rgb(var(--color-brand-profit) / <alpha-value>)',
+        'brand-loss': 'rgb(var(--color-brand-loss) / <alpha-value>)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -38,17 +38,17 @@ const config: Config = {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
          'value-flash': {
-          '0%, 100%': { 'background-color': 'var(--tw-bg-opacity, 1)' },
-          '50%': { 'background-color': 'rgba(34, 211, 238, 0.2)' },
+          '0%, 100%': { 'background-color': 'transparent' },
+          '50%': { 'background-color': 'rgb(var(--color-brand-accent) / 0.2)' },
         },
         'pulse-glow': {
           '0%, 100%': { 
             transform: 'scale(1)',
-            'box-shadow': '0 0 8px rgba(59, 130, 246, 0.6), 0 0 15px rgba(59, 130, 246, 0.5)'
+            'box-shadow': '0 0 8px rgb(var(--color-brand-primary) / 0.6), 0 0 15px rgb(var(--color-brand-primary) / 0.5)'
           },
           '50%': { 
             transform: 'scale(1.05)',
-            'box-shadow': '0 0 15px rgba(59, 130, 246, 0.7), 0 0 25px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.2)'
+            'box-shadow': '0 0 15px rgb(var(--color-brand-primary) / 0.7), 0 0 25px rgb(var(--color-brand-primary) / 0.6), 0 0 40px rgb(var(--color-brand-primary) / 0.2)'
           }
         },
          'background-pan': {

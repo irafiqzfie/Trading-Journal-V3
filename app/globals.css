@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --color-brand-bg: 30 64 175;
+  --color-brand-surface: 29 78 216;
+  --color-brand-primary: 59 130 246;
+  --color-brand-secondary: 96 165 250;
+  --color-brand-accent: 96 165 250;
+  --color-brand-text: 226 232 240;
+  --color-brand-text-secondary: 148 163 184;
+  --color-brand-profit: 74 222 128;
+  --color-brand-loss: 248 113 113;
+}

@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useMemo } from 'react';
 import type { Position } from '../types';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChartIcon } from './Icons';
@@ -61,12 +62,12 @@ const MonthlyPLChartCard: React.FC<{ positions: Position[] }> = ({ positions }) 
 
     return (
         <div
-          className="bg-brand-surface rounded-lg shadow-lg border border-white/10 backdrop-blur-sm h-full relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
+          className="bg-brand-surface backdrop-blur-md rounded-lg shadow-lg border border-white/10 h-full relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
           onClick={() => setIsExpanded(!isExpanded)}
           role="button"
           aria-expanded={isExpanded}
         >
-            <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-brand-accent to-brand-secondary transition-all duration-500 group-hover:w-2.5"></div>
+            <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-brand-accent to-brand-primary transition-all duration-500 group-hover:w-2.5"></div>
             <div className="p-4 pl-6">
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
