@@ -355,56 +355,53 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen text-brand-text font-sans bg-brand-bg">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 bg-[length:200%_200%] animate-background-pan" style={{ zIndex: 0 }}></div>
-        <div className="relative z-10">
-            <Header onExport={handleExportData} onImport={() => fileInputRef.current?.click()} onSettings={() => setIsSettingsModalOpen(true)} onLogout={handleLogout} isAuthenticated={isAuthenticated} />
-            <main className="container mx-auto p-4 md:p-6 lg:p-8">
-                <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
-                
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-                    <div className="lg:col-span-2"><EquityRiskCard equity={equity} onEquityChange={setEquity} riskPercent={riskPercent} onRiskPercentChange={setRiskPercent} useDynamicEquity={useDynamicEquity} onUseDynamicEquityChange={setUseDynamicEquity} currentEquity={currentEquity} /></div>
-                    <div className="lg:col-span-1"><PLSummaryCard summary={tradeStats.summary} /></div>
-                    <div className="lg:col-span-1"><KeyMetricsCard metrics={tradeStats.metrics} /></div>
-                    <div className="lg:col-span-4"><DailyPLChartCard positions={filteredPositions} /></div>
-                    <div className="lg:col-span-4"><MonthlyPLChartCard positions={filteredPositions} /></div>
-                    <div className="lg:col-span-4"><EquityChartCard positions={filteredPositions} initialEquity={initialEquity} /></div>
-                </div>
-                
-                <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                    <div className="flex flex-wrap items-center gap-4">
-                        <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">My Positions</h1>
-                        <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-brand-surface text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-blue-700 hover:text-white">
-                            <FilterIcon className="h-4 w-4" />
-                            <span>Filter</span>
-                            {activeFilterCount > 0 && <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-white text-xs font-bold">{activeFilterCount}</span>}
-                        </button>
-                        <div className="hidden sm:block border-l border-white/20 h-8"></div>
-                        <div className="flex gap-3">
-                            <button onClick={handleAnalyze} disabled={isAnalyzing || filteredPositions.length < 1} className="px-4 py-2 bg-transparent border border-brand-secondary text-brand-secondary font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-brand-secondary hover:text-white disabled:opacity-40">Analyze Habits</button>
-                            <button onClick={handleOpenAddModal} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 animate-pulse-glow"><PlusIcon /> Add Trade</button>
-                        </div>
-                    </div>
-                    <div>
-                        <span className="text-sm text-brand-text-secondary">Filtered Realized P/L</span>
-                        <p className={`text-3xl font-bold ${totalPL >= 0 ? 'text-brand-profit' : 'text-brand-loss'}`}>RM{totalPL.toFixed(2)}</p>
+        <Header onExport={handleExportData} onImport={() => fileInputRef.current?.click()} onSettings={() => setIsSettingsModalOpen(true)} onLogout={handleLogout} isAuthenticated={isAuthenticated} />
+        <main className="container mx-auto p-4 md:p-6 lg:p-8">
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
+            
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+                <div className="lg:col-span-2"><EquityRiskCard equity={equity} onEquityChange={setEquity} riskPercent={riskPercent} onRiskPercentChange={setRiskPercent} useDynamicEquity={useDynamicEquity} onUseDynamicEquityChange={setUseDynamicEquity} currentEquity={currentEquity} /></div>
+                <div className="lg:col-span-1"><PLSummaryCard summary={tradeStats.summary} /></div>
+                <div className="lg:col-span-1"><KeyMetricsCard metrics={tradeStats.metrics} /></div>
+                <div className="lg:col-span-4"><DailyPLChartCard positions={filteredPositions} /></div>
+                <div className="lg:col-span-4"><MonthlyPLChartCard positions={filteredPositions} /></div>
+                <div className="lg:col-span-4"><EquityChartCard positions={filteredPositions} initialEquity={initialEquity} /></div>
+            </div>
+            
+            <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div className="flex flex-wrap items-center gap-4">
+                    <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">My Positions</h1>
+                    <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-brand-surface text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-blue-700 hover:text-white">
+                        <FilterIcon className="h-4 w-4" />
+                        <span>Filter</span>
+                        {activeFilterCount > 0 && <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-white text-xs font-bold">{activeFilterCount}</span>}
+                    </button>
+                    <div className="hidden sm:block border-l border-white/20 h-8"></div>
+                    <div className="flex gap-3">
+                        <button onClick={handleAnalyze} disabled={isAnalyzing || filteredPositions.length < 1} className="px-4 py-2 bg-transparent border-2 border-brand-accent text-brand-accent font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-brand-accent hover:text-white disabled:opacity-40">Analyze Habits</button>
+                        <button onClick={handleOpenAddModal} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 animate-pulse-glow"><PlusIcon /> Add Trade</button>
                     </div>
                 </div>
-                
-                {isFilterVisible && <div className="mb-6 animate-fade-in-up"><FilterBar onApplyFilters={setFilters} onClearFilters={() => setFilters(initialFilters)} initialFilters={filters} /></div>}
-                
-                <div className="animate-fade-in-up">
-                    {isAnalysisVisible && <AnalysisCard analysis={analysis} isLoading={isAnalyzing} error={analysisError} onClose={handleCloseAnalysis} />}
-                    <TradeList positions={filteredPositions} originalPositionsCount={positions.length} onDelete={handleRequestDelete} onSell={handleOpenSellModal} onEdit={handleOpenEditModal} />
+                <div>
+                    <span className="text-sm text-brand-text-secondary">Filtered Realized P/L</span>
+                    <p className={`text-3xl font-bold ${totalPL >= 0 ? 'text-brand-profit' : 'text-brand-loss'}`}>RM{totalPL.toFixed(2)}</p>
                 </div>
-                
-                <div className="animate-fade-in-up mt-8"><TransactionHistoryCard positions={filteredPositions} /></div>
-                
-                {isModalOpen && <TradeFormModal onClose={handleCloseModal} onSave={handleSaveTransaction} positionToSellFrom={positionToSell} transactionToEdit={transactionToEdit} baseRiskAmount={baseRiskAmount} customSetupImages={customSetupImages} />}
-                {positionToDeleteId && <ConfirmDeleteModal onConfirm={handleConfirmDelete} onCancel={handleCancelDelete} positionTicker={positions.find(p => p.id === positionToDeleteId)?.ticker || ''} />}
-                {isImportConfirmOpen && <ConfirmImportModal onConfirm={handleConfirmImport} onCancel={handleCancelImport} />}
-                {isSettingsModalOpen && <SettingsModal isOpen={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)} customImages={customSetupImages} onCustomImagesChange={setCustomSetupImages} />}
-            </main>
-        </div>
+            </div>
+            
+            {isFilterVisible && <div className="mb-6 animate-fade-in-up"><FilterBar onApplyFilters={setFilters} onClearFilters={() => setFilters(initialFilters)} initialFilters={filters} /></div>}
+            
+            <div className="animate-fade-in-up">
+                {isAnalysisVisible && <AnalysisCard analysis={analysis} isLoading={isAnalyzing} error={analysisError} onClose={handleCloseAnalysis} />}
+                <TradeList positions={filteredPositions} originalPositionsCount={positions.length} onDelete={handleRequestDelete} onSell={handleOpenSellModal} onEdit={handleOpenEditModal} />
+            </div>
+            
+            <div className="animate-fade-in-up mt-8"><TransactionHistoryCard positions={filteredPositions} /></div>
+            
+            {isModalOpen && <TradeFormModal onClose={handleCloseModal} onSave={handleSaveTransaction} positionToSellFrom={positionToSell} transactionToEdit={transactionToEdit} baseRiskAmount={baseRiskAmount} customSetupImages={customSetupImages} />}
+            {positionToDeleteId && <ConfirmDeleteModal onConfirm={handleConfirmDelete} onCancel={handleCancelDelete} positionTicker={positions.find(p => p.id === positionToDeleteId)?.ticker || ''} />}
+            {isImportConfirmOpen && <ConfirmImportModal onConfirm={handleConfirmImport} onCancel={handleCancelImport} />}
+            {isSettingsModalOpen && <SettingsModal isOpen={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)} customImages={customSetupImages} onCustomImagesChange={setCustomSetupImages} />}
+        </main>
     </div>
   );
 };
