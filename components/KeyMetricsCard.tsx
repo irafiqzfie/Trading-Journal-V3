@@ -1,6 +1,7 @@
 
 
 
+
 import React from 'react';
 import type { KeyMetrics } from '../types';
 import { CalculatorIcon } from './Icons';
@@ -11,7 +12,7 @@ interface KeyMetricsCardProps {
 
 const KeyMetricsCard: React.FC<KeyMetricsCardProps> = ({ metrics }) => {
   return (
-    <div className="bg-brand-surface rounded-lg shadow-lg border border-white/10 h-full flex flex-col relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50">
+    <div className="bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-lg h-full flex flex-col relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50">
        <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-brand-accent to-brand-primary transition-all duration-500 group-hover:w-2.5"></div>
       <div className="p-6 pl-8 flex-grow flex flex-col">
         <div className="flex items-center gap-3 mb-4">

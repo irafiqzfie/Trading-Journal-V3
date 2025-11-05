@@ -16,7 +16,7 @@ const ImageModal = ({ src, onClose }: { src: string; onClose: () => void; }) => 
     <div onClick={onClose} className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true">
       <div className="relative w-full max-w-4xl max-h-[90vh] p-4" onClick={e => e.stopPropagation()}>
         <img src={src} alt="Trade chart" className="w-full h-full object-contain rounded-lg shadow-2xl" />
-        <button onClick={onClose} className="absolute -top-1 -right-1 p-1.5 bg-brand-surface rounded-full text-brand-text-secondary hover:text-white hover:bg-white/10 transition-colors" aria-label="Close image viewer">
+        <button onClick={onClose} className="absolute -top-1 -right-1 p-1.5 bg-stone-800/80 backdrop-blur-sm rounded-full text-brand-text-secondary hover:text-white hover:bg-white/10 transition-colors" aria-label="Close image viewer">
           <CloseIcon />
         </button>
       </div>
@@ -165,7 +165,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
       {modalImageUrl && (
         <ImageModal src={modalImageUrl} onClose={() => setModalImageUrl(null)} />
       )}
-      <div className="bg-brand-surface rounded-lg shadow-lg transition-all duration-300 ease-in-out border border-white/10 relative overflow-hidden group hover:shadow-2xl hover:border-brand-accent/50 hover:-translate-y-1">
+      <div className="bg-stone-900/60 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-lg transition-all duration-300 ease-in-out relative overflow-hidden group hover:shadow-2xl hover:border-brand-accent/50 hover:-translate-y-1">
         <div className={`absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b ${gradientColor} transition-all duration-500 group-hover:w-2.5`}></div>
         
         <div className="p-4 pl-6">
@@ -224,7 +224,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
               {!isClosed && (
                 <button
                     onClick={() => onSell(position)}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-brand-secondary text-white text-base font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-blue-500 transform hover:scale-105"
+                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-brand-secondary text-white text-base font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-orange-600 transform hover:scale-105"
                     aria-label={`Sell from ${position.ticker}`}
                 >
                     <DollarIcon className="h-6 w-6" />

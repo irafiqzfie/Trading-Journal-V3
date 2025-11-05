@@ -15,7 +15,7 @@ const TradeList: React.FC<TradeListProps> = ({ positions, originalPositionsCount
 
   if (positions.length === 0) {
     return (
-      <div className="text-center py-16 px-6 bg-brand-surface rounded-lg border border-white/10 shadow-lg">
+      <div className="text-center py-16 px-6 bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold text-white">
           {originalPositionsCount > 0 ? 'No Matching Positions' : 'No Positions Yet'}
         </h2>
@@ -57,7 +57,7 @@ const TradeList: React.FC<TradeListProps> = ({ positions, originalPositionsCount
         {positions.length > 1 && (
           <button
             onClick={handleToggleAll}
-            className="text-sm text-brand-accent hover:text-sky-400 font-semibold transition-colors"
+            className="text-sm text-brand-accent hover:text-orange-400 font-semibold transition-colors"
             aria-label={areAllExpanded ? 'Collapse all items' : 'Expand all items'}
           >
             {areAllExpanded ? 'Collapse All' : 'Expand All'}

@@ -1,4 +1,5 @@
 
+
 import React, { useEffect, useRef } from 'react';
 import { CloseIcon, SparklesIcon, XCircleIcon } from './Icons';
 
@@ -77,7 +78,7 @@ const SecondOpinionModal: React.FC<SecondOpinionModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title-opinion" onClick={onClose}>
       <div 
-        className="bg-brand-surface rounded-lg shadow-2xl p-6 w-full max-w-4xl m-4 animate-slide-up-fade border border-white/10 max-h-[90vh] flex flex-col"
+        className="bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-2xl p-6 w-full max-w-4xl m-4 animate-slide-up-fade max-h-[90vh] flex flex-col"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4 flex-shrink-0">

@@ -6,18 +6,21 @@
     <title>AS Trading Journal</title>
     <style>
       :root {
-        --brand-bg: #0f172a;
-        --brand-surface: #172554;
-        --brand-primary: #3b82f6;
-        --brand-secondary: #60a5fa;
-        --brand-accent: #22d3ee;
-        --brand-text: #e2e8f0;
-        --brand-text-secondary: #94a3b8;
+        --brand-bg: #1c1917; /* stone-900 */
+        --brand-primary: #f97316; /* orange-500 */
+        --brand-secondary: #fb923c; /* orange-400 */
+        --brand-accent: #f97316; /* orange-500 */
+        --brand-text: #f5f5f4; /* stone-100 */
+        --brand-text-secondary: #a8a29e; /* stone-400 */
         --brand-profit: #4ade80;
         --brand-loss: #f87171;
       }
       body {
         background-color: var(--brand-bg);
+        background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
       }
     </style>
     <script>
@@ -26,7 +29,6 @@
           extend: {
             colors: {
               'brand-bg': 'var(--brand-bg)',
-              'brand-surface': 'var(--brand-surface)',
               'brand-primary': 'var(--brand-primary)',
               'brand-secondary': 'var(--brand-secondary)',
               'brand-accent': 'var(--brand-accent)',
@@ -50,16 +52,16 @@
               },
                'value-flash': {
                 '0%, 100%': { 'background-color': 'rgba(0, 0, 0, 0.3)' },
-                '50%': { 'background-color': 'rgba(34, 211, 238, 0.2)' },
+                '50%': { 'background-color': 'rgba(249, 115, 22, 0.2)' },
               },
               'pulse-glow': {
                 '0%, 100%': { 
                   transform: 'scale(1)',
-                  'box-shadow': '0 0 8px rgba(59, 130, 246, 0.6), 0 0 15px rgba(59, 130, 246, 0.5)'
+                  'box-shadow': '0 0 8px rgba(249, 115, 22, 0.6), 0 0 15px rgba(249, 115, 22, 0.5)'
                 },
                 '50%': { 
                   transform: 'scale(1.05)',
-                  'box-shadow': '0 0 15px rgba(59, 130, 246, 0.7), 0 0 25px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.2)'
+                  'box-shadow': '0 0 15px rgba(249, 115, 22, 0.7), 0 0 25px rgba(249, 115, 22, 0.6), 0 0 40px rgba(249, 115, 22, 0.2)'
                 }
               },
                'background-pan': {

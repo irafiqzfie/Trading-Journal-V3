@@ -1,5 +1,6 @@
 
 
+
 import React, { useMemo } from 'react';
 import { ShieldIcon, DollarIcon } from './Icons';
 
@@ -32,10 +33,10 @@ const EquityRiskCard: React.FC<EquityRiskCardProps> = ({
     return 0;
   }, [equity, riskPercent, useDynamicEquity, currentEquity]);
 
-  const inputClasses = "block w-full bg-blue-900/50 border-2 border-slate-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary transition-all p-2 text-lg";
+  const inputClasses = "block w-full bg-stone-800/60 border-2 border-stone-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary transition-all p-2 text-lg";
 
   return (
-    <div className="bg-brand-surface rounded-lg shadow-lg py-6 pr-6 pl-8 border border-white/10 h-full flex flex-col relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50">
+    <div className="bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-lg py-6 pr-6 pl-8 h-full flex flex-col relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50">
       <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-brand-accent to-brand-primary transition-all duration-500 group-hover:w-2.5"></div>
       <div className="flex items-center gap-3 mb-4">
         <ShieldIcon className="text-brand-accent h-7 w-7" />

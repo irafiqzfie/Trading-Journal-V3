@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Position, SellTransaction, BuyTransaction, AnalysisResult, PLSummary, KeyMetrics, Filters } from './types';
@@ -439,7 +440,7 @@ Keep the entire analysis brief and to the point.
   }
 
   return (
-    <div className="min-h-screen text-brand-text font-sans bg-brand-bg">
+    <div className="min-h-screen text-brand-text font-sans">
         <Header onExport={handleExportData} onImport={() => fileInputRef.current?.click()} onSettings={() => setIsSettingsModalOpen(true)} onLogout={handleLogout} isAuthenticated={isAuthenticated} />
         <main className="container mx-auto p-4 md:p-6 lg:p-8">
             <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
@@ -456,7 +457,7 @@ Keep the entire analysis brief and to the point.
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <div className="flex flex-wrap items-center gap-4">
                     <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">My Positions</h1>
-                    <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-brand-surface text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-blue-700 hover:text-white">
+                    <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-stone-800 text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-brand-primary hover:text-white">
                         <FilterIcon className="h-4 w-4" />
                         <span>Filter</span>
                         {activeFilterCount > 0 && <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-white text-xs font-bold">{activeFilterCount}</span>}

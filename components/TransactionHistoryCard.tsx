@@ -1,6 +1,7 @@
 
 
 
+
 import React, { useState, useMemo } from 'react';
 import type { Position } from '../types';
 import { ChevronDownIcon, ClipboardListIcon } from './Icons';
@@ -43,7 +44,7 @@ const TransactionHistoryCard: React.FC<TransactionHistoryCardProps> = ({ positio
 
     return (
         <div
-          className="bg-brand-surface rounded-lg shadow-lg border border-white/10 relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
+          className="bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-lg relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
           onClick={() => setIsExpanded(!isExpanded)}
           role="button"
           aria-expanded={isExpanded}

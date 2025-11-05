@@ -1,6 +1,7 @@
 
 
 
+
 import React, { useState, useMemo } from 'react';
 import type { Position } from '../types';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChartIcon } from './Icons';
@@ -62,7 +63,7 @@ const MonthlyPLChartCard: React.FC<{ positions: Position[] }> = ({ positions }) 
 
     return (
         <div
-          className="bg-brand-surface rounded-lg shadow-lg border border-white/10 h-full relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
+          className="bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-lg h-full relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
           onClick={() => setIsExpanded(!isExpanded)}
           role="button"
           aria-expanded={isExpanded}
@@ -142,7 +143,7 @@ const MonthlyPLChartCard: React.FC<{ positions: Position[] }> = ({ positions }) 
                                     </div>
                                 </div>
                                 {!hasData && (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-brand-surface/80 rounded-md">
+                                    <div className="absolute inset-0 flex items-center justify-center bg-stone-900/80 rounded-md">
                                         <p className="text-brand-text-secondary">No realized P/L for this year.</p>
                                     </div>
                                 )}

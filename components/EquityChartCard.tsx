@@ -1,6 +1,7 @@
 
 
 
+
 import React, { useState, useMemo } from 'react';
 import type { Position } from '../types';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, LineChartIcon } from './Icons';
@@ -124,7 +125,7 @@ const EquityChartCard: React.FC<EquityChartCardProps> = ({ positions, initialEqu
 
     return (
         <div
-          className="bg-brand-surface rounded-lg shadow-lg border border-white/10 relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
+          className="bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-lg relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50 cursor-pointer"
           onClick={() => setIsExpanded(!isExpanded)}
           role="button"
           aria-expanded={isExpanded}
@@ -164,7 +165,7 @@ const EquityChartCard: React.FC<EquityChartCardProps> = ({ positions, initialEqu
                         
                         <div className="h-64 w-full">
                             {hasData ? <Chart /> : (
-                                 <div className="h-full flex items-center justify-center bg-brand-surface/80 rounded-md">
+                                 <div className="h-full flex items-center justify-center bg-stone-900/80 rounded-md">
                                     <p className="text-brand-text-secondary">No closed trades for this year.</p>
                                 </div>
                             )}
