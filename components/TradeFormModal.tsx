@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { Position, BuyTransaction, SellTransaction } from '../types';
-import { CloseIcon, CalendarIcon, ImageIcon, TrashIcon, SparklesIcon } from './Icons';
+import { CloseIcon, CalendarIcon, ImageIcon, TrashIcon } from './Icons';
 
 interface TradeFormModalProps {
   onClose: () => void;
@@ -14,7 +14,6 @@ interface TradeFormModalProps {
   } | null;
   baseRiskAmount: number;
   customSetupImages: Record<string, string>;
-  onRequestSecondOpinion: (data: { ticker: string; buyReasons: string[]; chartImage: string; }) => void;
 }
 
 export const buySetups = [
@@ -39,7 +38,7 @@ interface ImageTooltipState {
 }
 
 
-const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positionToSellFrom, transactionToEdit, baseRiskAmount, customSetupImages, onRequestSecondOpinion }) => {
+const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positionToSellFrom, transactionToEdit, baseRiskAmount, customSetupImages }) => {
   const isEditing = !!transactionToEdit;
   const isSellMode = (isEditing && transactionToEdit.type === 'sell') || (!isEditing && !!positionToSellFrom);
 
@@ -572,7 +571,6 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
     const calcLabel = "text-xs text-slate-400 block";
     const calcValue = "font-semibold text-white text-lg";
     const riskValue = "font-semibold text-brand-accent text-lg";
-    const canRequestSecondOpinion = ticker && buyReason.length > 0 && buyChartImage;
 
     return (
       <>
@@ -863,8 +861,6 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
     );
   };
   
-  const canRequestSecondOpinion = !isSellMode && ticker && buyReason.length > 0 && buyChartImage;
-
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={onClose}>
       {renderImageTooltip()}
@@ -886,22 +882,10 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
           {isSellMode ? renderSellForm() : renderBuyForm()}
         </form>
 
-        <div className="flex flex-col sm:flex-row justify-between items-center pt-4 space-x-3 border-t border-white/10 mt-4 flex-shrink-0">
-            { !isSellMode ? (
-                <button
-                    type="button"
-                    onClick={() => canRequestSecondOpinion && onRequestSecondOpinion({ ticker, buyReasons: buyReason, chartImage: buyChartImage! })}
-                    disabled={!canRequestSecondOpinion}
-                    className="flex items-center gap-2 px-4 py-2 bg-transparent border-2 border-purple-500 text-purple-400 font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-purple-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto mb-2 sm:mb-0"
-                >
-                    <SparklesIcon className="h-5 w-5"/>
-                    Get AI Second Opinion
-                </button>
-            ) : <div /> /* Placeholder to keep layout consistent */ }
-
+        <div className="flex flex-col sm:flex-row justify-end items-center pt-4 border-t border-white/10 mt-4 flex-shrink-0">
             <div className="flex gap-3 w-full sm:w-auto">
               <button type="button" onClick={onClose} className="flex-1 sm:flex-none px-5 py-2 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-500 transition-colors">Cancel</button>
-              <button type="submit" onClick={handleSubmit} className="flex-1 sm:flex-none px-5 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg shadow-brand-primary/30 transition-all duration-300 hover:bg-orange-600 transform hover:scale-105">
+              <button type="submit" onClick={handleSubmit} className="flex-1 sm:flex-none px-5 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
                 {isEditing ? 'Save Changes' : 'Add Transaction'}
               </button>
             </div>

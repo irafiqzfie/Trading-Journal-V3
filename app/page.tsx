@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
@@ -22,7 +21,6 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import FilterBar from '../components/FilterBar';
 import { getPositionStats } from '../utils/tradeCalculations';
 import LoginModal from '../components/LoginModal';
-import SecondOpinionModal from '../components/SecondOpinionModal';
 
 const initialFilters: Filters = {
   ticker: '',
@@ -71,13 +69,6 @@ const HomePage: React.FC = () => {
   const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
 
   const [hasMounted, setHasMounted] = useState(false);
-
-  // State for Second Opinion Modal
-  const [isSecondOpinionModalOpen, setIsSecondOpinionModalOpen] = useState(false);
-  const [secondOpinionData, setSecondOpinionData] = useState<{ ticker: string; buyReasons: string[]; chartImage: string; } | null>(null);
-  const [secondOpinionAnalysis, setSecondOpinionAnalysis] = useState('');
-  const [isSecondOpinionLoading, setIsSecondOpinionLoading] = useState(false);
-  const [secondOpinionError, setSecondOpinionError] = useState<string | null>(null);
 
   useEffect(() => {
     setHasMounted(true);
@@ -572,48 +563,6 @@ const HomePage: React.FC = () => {
     return false;
   }).length;
   
-  const handleRequestSecondOpinion = async (data: { ticker: string; buyReasons: string[]; chartImage: string; }) => {
-    setSecondOpinionData(data);
-    setIsSecondOpinionModalOpen(true);
-    setIsSecondOpinionLoading(true);
-    setSecondOpinionAnalysis('');
-    setSecondOpinionError(null);
-
-    try {
-      const response = await fetch('/api/second-opinion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok || !response.body) {
-        const errorData = await response.json().catch(() => ({ error: "An unknown error occurred" }));
-        throw new Error(errorData.error || 'Failed to get a response from the server.');
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value);
-        setSecondOpinionAnalysis(prev => prev + chunk);
-      }
-
-    } catch (error: any) {
-      setSecondOpinionError(error.message);
-    } finally {
-      setIsSecondOpinionLoading(false);
-    }
-  };
-
-  const handleCloseSecondOpinionModal = () => {
-    setIsSecondOpinionModalOpen(false);
-    setSecondOpinionData(null);
-    setSecondOpinionAnalysis('');
-    setSecondOpinionError(null);
-  };
-
   if (!hasMounted) {
     return null; // or a loading spinner
   }
@@ -631,131 +580,133 @@ const HomePage: React.FC = () => {
     <div className="min-h-screen text-brand-text font-sans">
       <Header onExport={handleExportData} onImport={() => fileInputRef.current?.click()} onSettings={() => setIsSettingsModalOpen(true)} onLogout={handleLogout} isAuthenticated={isAuthenticated} />
       <main className="container mx-auto p-4 md:p-6 lg:p-8">
-        <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept=".json"
-            className="hidden"
-        />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-          <div className="lg:col-span-2 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-            <EquityRiskCard
-              equity={equity}
-              onEquityChange={setEquity}
-              riskPercent={riskPercent}
-              onRiskPercentChange={setRiskPercent}
-              useDynamicEquity={useDynamicEquity}
-              onUseDynamicEquityChange={setUseDynamicEquity}
-              currentEquity={currentEquity}
+        <div className="bg-stone-950/30 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-4 md:p-6 lg:p-8">
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept=".json"
+                className="hidden"
             />
-          </div>
-          <div className="lg:col-span-1 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-            <PLSummaryCard summary={tradeStats.summary} />
-          </div>
-           <div className="lg:col-span-1 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-            <KeyMetricsCard metrics={tradeStats.metrics} />
-          </div>
-          <div className="lg:col-span-4 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-             <DailyPLChartCard positions={filteredPositions} />
-          </div>
-          <div className="lg:col-span-4 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
-             <MonthlyPLChartCard positions={filteredPositions} />
-          </div>
-          <div className="lg:col-span-4 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
-             <EquityChartCard positions={filteredPositions} initialEquity={initialEquity} />
-          </div>
-        </div>
-        
-        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 animate-fade-in-up" style={{ animationDelay: '700ms' }}>
-          <div className="flex flex-wrap items-center gap-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">My Positions</h1>
-            <button
-                onClick={() => setIsFilterVisible(!isFilterVisible)}
-                className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-slate-800 text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-slate-700 hover:text-white"
-                aria-expanded={isFilterVisible}
-              >
-                <FilterIcon className="h-4 w-4" />
-                <span>Filter</span>
-                 {activeFilterCount > 0 && (
-                    <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white">
-                        {activeFilterCount}
-                    </span>
-                )}
-            </button>
-            <div className="hidden sm:block border-l border-white/20 h-8"></div>
-            <div className="flex gap-3">
-              <button
-                onClick={handleAnalyze}
-                disabled={isAnalyzing || filteredPositions.length < 1}
-                className="px-4 py-2 bg-transparent border-2 border-brand-accent text-brand-accent font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-brand-accent hover:text-white disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-              >
-                {isAnalyzing ? 'Analyzing...' : 'Analyze Habits'}
-              </button>
-              <button
-                onClick={handleOpenAddModal}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 animate-pulse-glow"
-              >
-                <PlusIcon />
-                Add Trade
-              </button>
-            </div>
-           
-          </div>
-           <div className="text-center">
-             <span className="text-sm text-brand-text-secondary">Filtered Realized P/L</span>
-             <p className={`text-3xl font-bold ${totalPL >= 0 ? 'text-brand-profit' : 'text-brand-loss'} [text-shadow:0_0_8px_var(--tw-shadow-color)] ${totalPL >= 0 ? 'shadow-green-500/50' : 'shadow-red-500/50'}`}>
-                RM{totalPL.toFixed(2)}
-              </p>
-           </div>
-        </div>
-        
-        {isFilterVisible && (
-            <div className="mb-6 animate-fade-in-up" style={{ animationDelay: '750ms' }}>
-                <FilterBar
-                    onApplyFilters={setFilters}
-                    onClearFilters={() => setFilters(initialFilters)}
-                    initialFilters={filters}
+            
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+              <div className="lg:col-span-2 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+                <EquityRiskCard
+                  equity={equity}
+                  onEquityChange={setEquity}
+                  riskPercent={riskPercent}
+                  onRiskPercentChange={setRiskPercent}
+                  useDynamicEquity={useDynamicEquity}
+                  onUseDynamicEquityChange={setUseDynamicEquity}
+                  currentEquity={currentEquity}
                 />
+              </div>
+              <div className="lg:col-span-1 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                <PLSummaryCard summary={tradeStats.summary} />
+              </div>
+               <div className="lg:col-span-1 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+                <KeyMetricsCard metrics={tradeStats.metrics} />
+              </div>
+              <div className="lg:col-span-4 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+                 <DailyPLChartCard positions={filteredPositions} />
+              </div>
+              <div className="lg:col-span-4 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+                 <MonthlyPLChartCard positions={filteredPositions} />
+              </div>
+              <div className="lg:col-span-4 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+                 <EquityChartCard positions={filteredPositions} initialEquity={initialEquity} />
+              </div>
             </div>
-        )}
-        
-        {isLoading && (
-            <div className="text-center py-16 px-6 bg-brand-surface rounded-lg border border-white/10 shadow-lg">
-                <p className="text-brand-text-secondary">Loading trades from server...</p>
+            
+            <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 animate-fade-in-up" style={{ animationDelay: '700ms' }}>
+              <div className="flex flex-wrap items-center gap-4">
+                <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">My Positions</h1>
+                <button
+                    onClick={() => setIsFilterVisible(!isFilterVisible)}
+                    className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-slate-800 text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-slate-700 hover:text-white"
+                    aria-expanded={isFilterVisible}
+                  >
+                    <FilterIcon className="h-4 w-4" />
+                    <span>Filter</span>
+                     {activeFilterCount > 0 && (
+                        <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white">
+                            {activeFilterCount}
+                        </span>
+                    )}
+                </button>
+                <div className="hidden sm:block border-l border-white/20 h-8"></div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleAnalyze}
+                    disabled={isAnalyzing || filteredPositions.length < 1}
+                    className="px-4 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:bg-brand-primary/50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    {isAnalyzing ? 'Analyzing...' : 'Analyze Habits'}
+                  </button>
+                  <button
+                    onClick={handleOpenAddModal}
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 animate-pulse-glow"
+                  >
+                    <PlusIcon />
+                    Add Trade
+                  </button>
+                </div>
+               
+              </div>
+               <div className="text-center">
+                 <span className="text-sm text-brand-text-secondary">Filtered Realized P/L</span>
+                 <p className={`text-3xl font-bold ${totalPL >= 0 ? 'text-brand-profit' : 'text-brand-loss'} [text-shadow:0_0_8px_var(--tw-shadow-color)] ${totalPL >= 0 ? 'shadow-green-500/50' : 'shadow-red-500/50'}`}>
+                    RM{totalPL.toFixed(2)}
+                  </p>
+               </div>
             </div>
-        )}
-        {fetchError && (
-             <div className="text-center py-16 px-6 bg-red-900/20 text-red-300 rounded-lg border border-red-500/30 shadow-lg">
-                <h2 className="text-xl font-semibold text-white">Error Loading Data</h2>
-                <p>{fetchError}</p>
-            </div>
-        )}
+            
+            {isFilterVisible && (
+                <div className="mb-6 animate-fade-in-up" style={{ animationDelay: '750ms' }}>
+                    <FilterBar
+                        onApplyFilters={setFilters}
+                        onClearFilters={() => setFilters(initialFilters)}
+                        initialFilters={filters}
+                    />
+                </div>
+            )}
+            
+            {isLoading && (
+                <div className="text-center py-16 px-6 bg-brand-surface rounded-lg border border-white/10 shadow-lg">
+                    <p className="text-brand-text-secondary">Loading trades from server...</p>
+                </div>
+            )}
+            {fetchError && (
+                 <div className="text-center py-16 px-6 bg-red-900/20 text-red-300 rounded-lg border border-red-500/30 shadow-lg">
+                    <h2 className="text-xl font-semibold text-white">Error Loading Data</h2>
+                    <p>{fetchError}</p>
+                </div>
+            )}
 
-        {!isLoading && !fetchError && (
-          <div className="animate-fade-in-up" style={{ animationDelay: '800ms' }}>
-              {isAnalysisVisible && (
-                <AnalysisCard 
-                  analysis={analysis} 
-                  isLoading={isAnalyzing} 
-                  error={analysisError} 
-                  onClose={handleCloseAnalysis} 
-                />
-              )}
-              
-              <TradeList 
-                positions={filteredPositions}
-                originalPositionsCount={positions.length}
-                onDelete={handleRequestDelete} 
-                onSell={handleOpenSellModal} 
-                onEdit={handleOpenEditModal} 
-              />
-          </div>
-        )}
-        
-        <div className="animate-fade-in-up mt-8" style={{ animationDelay: '900ms' }}>
-           <TransactionHistoryCard positions={filteredPositions} />
+            {!isLoading && !fetchError && (
+              <div className="animate-fade-in-up" style={{ animationDelay: '800ms' }}>
+                  {isAnalysisVisible && (
+                    <AnalysisCard 
+                      analysis={analysis} 
+                      isLoading={isAnalyzing} 
+                      error={analysisError} 
+                      onClose={handleCloseAnalysis} 
+                    />
+                  )}
+                  
+                  <TradeList 
+                    positions={filteredPositions}
+                    originalPositionsCount={positions.length}
+                    onDelete={handleRequestDelete} 
+                    onSell={handleOpenSellModal} 
+                    onEdit={handleOpenEditModal} 
+                  />
+              </div>
+            )}
+            
+            <div className="animate-fade-in-up mt-8" style={{ animationDelay: '900ms' }}>
+               <TransactionHistoryCard positions={filteredPositions} />
+            </div>
         </div>
         
         {isModalOpen && (
@@ -766,19 +717,6 @@ const HomePage: React.FC = () => {
             transactionToEdit={transactionToEdit}
             baseRiskAmount={baseRiskAmount}
             customSetupImages={customSetupImages}
-            onRequestSecondOpinion={handleRequestSecondOpinion}
-          />
-        )}
-        {secondOpinionData && (
-          <SecondOpinionModal
-            isOpen={isSecondOpinionModalOpen}
-            onClose={handleCloseSecondOpinionModal}
-            ticker={secondOpinionData.ticker}
-            buyReasons={secondOpinionData.buyReasons}
-            chartImage={secondOpinionData.chartImage}
-            analysis={secondOpinionAnalysis}
-            isLoading={isSecondOpinionLoading}
-            error={secondOpinionError}
           />
         )}
         {positionToDeleteId && (

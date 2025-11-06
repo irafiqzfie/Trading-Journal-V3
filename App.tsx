@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Position, SellTransaction, BuyTransaction, AnalysisResult, PLSummary, KeyMetrics, Filters } from './types';
@@ -21,8 +18,6 @@ import PLSummaryCard from './components/PLSummaryCard';
 import ConfirmDeleteModal from './components/ConfirmDeleteModal';
 import FilterBar from './components/FilterBar';
 import LoginModal from './components/LoginModal'; // Import the new LoginModal
-// FIX: Import SecondOpinionModal to support the second opinion feature.
-import SecondOpinionModal from './components/SecondOpinionModal';
 import { getPositionStats } from './utils/tradeCalculations';
 import { GoogleGenAI } from '@google/genai';
 
@@ -112,13 +107,6 @@ const App: React.FC = () => {
   const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
   
   const [hasMounted, setHasMounted] = useState(false);
-
-  // FIX: Add state for the Second Opinion Modal feature.
-  const [isSecondOpinionModalOpen, setIsSecondOpinionModalOpen] = useState(false);
-  const [secondOpinionData, setSecondOpinionData] = useState<{ ticker: string; buyReasons: string[]; chartImage: string; } | null>(null);
-  const [secondOpinionAnalysis, setSecondOpinionAnalysis] = useState('');
-  const [isSecondOpinionLoading, setIsSecondOpinionLoading] = useState(false);
-  const [secondOpinionError, setSecondOpinionError] = useState<string | null>(null);
 
   useEffect(() => {
     setHasMounted(true);
@@ -275,72 +263,6 @@ const App: React.FC = () => {
   const handleConfirmDelete = () => { if (positionToDeleteId) { setPositions(positions.filter(p => p.id !== positionToDeleteId)); setPositionToDeleteId(null); } };
   const handleCancelDelete = () => setPositionToDeleteId(null);
   
-  // FIX: Add handler for second opinion requests from the trade form modal.
-  const handleRequestSecondOpinion = async (data: { ticker: string; buyReasons: string[]; chartImage: string; }) => {
-    setSecondOpinionData(data);
-    setIsSecondOpinionModalOpen(true);
-    setIsSecondOpinionLoading(true);
-    setSecondOpinionAnalysis('');
-    setSecondOpinionError(null);
-
-    try {
-      const ai = new GoogleGenAI({apiKey: process.env.API_KEY as string});
-
-      const { ticker, buyReasons, chartImage } = data;
-
-      const match = chartImage.match(/^data:(image\/.+);base64,(.+)$/);
-      if (!match) {
-        throw new Error('Invalid image format. Expected a data URL.');
-      }
-      
-      const mimeType = match[1];
-      const base64Data = match[2];
-
-      const prompt = `
-You are an expert trading analyst providing a "second opinion" on a trade setup.
-Your tone should be objective, balanced, and educational, like a mentor.
-Do not give direct financial advice to buy or sell.
-Analyze the provided chart image and the trader's stated reasons for entry.
-Provide a concise analysis in Markdown format.
-
-**Ticker:** ${ticker.toUpperCase()}
-**Stated Buy Reasons:** ${buyReasons.join(', ')}
-
-Based on the chart and reasons, provide the following:
-- **Strengths:** 2-3 bullet points on what looks promising about this setup.
-- **Potential Risks:** 2-3 bullet points on potential weaknesses, risks, or things to watch out for.
-- **Key Level to Watch:** Identify one critical price level (e.g., support, resistance, breakout point) and explain its significance.
-
-Keep the entire analysis brief and to the point.
-      `;
-
-      const imagePart = {
-          inlineData: {
-              mimeType: mimeType,
-              data: base64Data,
-          },
-      };
-
-      const textPart = {
-          text: prompt,
-      };
-
-      const responseStream = await ai.models.generateContentStream({
-          model: 'gemini-2.5-flash',
-          contents: { parts: [textPart, imagePart] },
-      });
-      
-      for await (const chunk of responseStream) {
-        setSecondOpinionAnalysis(prev => prev + chunk.text);
-      }
-
-    } catch (error: any) {
-      setSecondOpinionError(error.message || 'Failed to get analysis from the AI service.');
-    } finally {
-      setIsSecondOpinionLoading(false);
-    }
-  };
-  
   const handleAnalyze = async () => {
     const positionsToAnalyze = filteredPositions;
     if (positionsToAnalyze.flatMap(p => p.sells).length < 3) {
@@ -374,14 +296,6 @@ Keep the entire analysis brief and to the point.
   };
 
   const handleCloseAnalysis = () => setIsAnalysisVisible(false);
-  
-  // FIX: Add a handler to close the second opinion modal.
-  const handleCloseSecondOpinionModal = () => {
-    setIsSecondOpinionModalOpen(false);
-    setSecondOpinionData(null);
-    setSecondOpinionAnalysis('');
-    setSecondOpinionError(null);
-  };
   
   const handleExportData = () => {
       const dataStr = JSON.stringify(positions, null, 2);
@@ -444,61 +358,48 @@ Keep the entire analysis brief and to the point.
     <div className="min-h-screen text-brand-text font-sans">
         <Header onExport={handleExportData} onImport={() => fileInputRef.current?.click()} onSettings={() => setIsSettingsModalOpen(true)} onLogout={handleLogout} isAuthenticated={isAuthenticated} />
         <main className="container mx-auto p-4 md:p-6 lg:p-8">
-            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
-            
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-                <div className="lg:col-span-2"><EquityRiskCard equity={equity} onEquityChange={setEquity} riskPercent={riskPercent} onRiskPercentChange={setRiskPercent} useDynamicEquity={useDynamicEquity} onUseDynamicEquityChange={setUseDynamicEquity} currentEquity={currentEquity} /></div>
-                <div className="lg:col-span-1"><PLSummaryCard summary={tradeStats.summary} /></div>
-                <div className="lg:col-span-1"><KeyMetricsCard metrics={tradeStats.metrics} /></div>
-                <div className="lg:col-span-4"><DailyPLChartCard positions={filteredPositions} /></div>
-                <div className="lg:col-span-4"><MonthlyPLChartCard positions={filteredPositions} /></div>
-                <div className="lg:col-span-4"><EquityChartCard positions={filteredPositions} initialEquity={initialEquity} /></div>
-            </div>
-            
-            <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <div className="flex flex-wrap items-center gap-4">
-                    <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">My Positions</h1>
-                    <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-stone-800 text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-brand-primary hover:text-white">
-                        <FilterIcon className="h-4 w-4" />
-                        <span>Filter</span>
-                        {activeFilterCount > 0 && <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-white text-xs font-bold">{activeFilterCount}</span>}
-                    </button>
-                    <div className="hidden sm:block border-l border-white/20 h-8"></div>
-                    <div className="flex gap-3">
-                        <button onClick={handleAnalyze} disabled={isAnalyzing || filteredPositions.length < 1} className="px-4 py-2 bg-transparent border-2 border-brand-accent text-brand-accent font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-brand-accent hover:text-white disabled:opacity-40">Analyze Habits</button>
-                        <button onClick={handleOpenAddModal} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 animate-pulse-glow"><PlusIcon /> Add Trade</button>
+            <div className="bg-stone-950/30 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-4 md:p-6 lg:p-8">
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
+                
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+                    <div className="lg:col-span-2"><EquityRiskCard equity={equity} onEquityChange={setEquity} riskPercent={riskPercent} onRiskPercentChange={setRiskPercent} useDynamicEquity={useDynamicEquity} onUseDynamicEquityChange={setUseDynamicEquity} currentEquity={currentEquity} /></div>
+                    <div className="lg:col-span-1"><PLSummaryCard summary={tradeStats.summary} /></div>
+                    <div className="lg:col-span-1"><KeyMetricsCard metrics={tradeStats.metrics} /></div>
+                    <div className="lg:col-span-4"><DailyPLChartCard positions={filteredPositions} /></div>
+                    <div className="lg:col-span-4"><MonthlyPLChartCard positions={filteredPositions} /></div>
+                    <div className="lg:col-span-4"><EquityChartCard positions={filteredPositions} initialEquity={initialEquity} /></div>
+                </div>
+                
+                <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <div className="flex flex-wrap items-center gap-4">
+                        <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">My Positions</h1>
+                        <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-stone-800 text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-brand-primary hover:text-white">
+                            <FilterIcon className="h-4 w-4" />
+                            <span>Filter</span>
+                            {activeFilterCount > 0 && <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-white text-xs font-bold">{activeFilterCount}</span>}
+                        </button>
+                        <div className="hidden sm:block border-l border-white/20 h-8"></div>
+                        <div className="flex gap-3">
+                            <button onClick={handleAnalyze} disabled={isAnalyzing || filteredPositions.length < 1} className="px-4 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:bg-brand-primary/50 disabled:cursor-not-allowed disabled:hover:scale-100">Analyze Habits</button>
+                            <button onClick={handleOpenAddModal} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 animate-pulse-glow"><PlusIcon /> Add Trade</button>
+                        </div>
+                    </div>
+                    <div>
+                        <span className="text-sm text-brand-text-secondary">Filtered Realized P/L</span>
+                        <p className={`text-3xl font-bold ${totalPL >= 0 ? 'text-brand-profit' : 'text-brand-loss'}`}>RM{totalPL.toFixed(2)}</p>
                     </div>
                 </div>
-                <div>
-                    <span className="text-sm text-brand-text-secondary">Filtered Realized P/L</span>
-                    <p className={`text-3xl font-bold ${totalPL >= 0 ? 'text-brand-profit' : 'text-brand-loss'}`}>RM{totalPL.toFixed(2)}</p>
+                
+                {isFilterVisible && <div className="mb-6 animate-fade-in-up"><FilterBar onApplyFilters={setFilters} onClearFilters={() => setFilters(initialFilters)} initialFilters={filters} /></div>}
+                
+                <div className="animate-fade-in-up">
+                    {isAnalysisVisible && <AnalysisCard analysis={analysis} isLoading={isAnalyzing} error={analysisError} onClose={handleCloseAnalysis} />}
+                    <TradeList positions={filteredPositions} originalPositionsCount={positions.length} onDelete={handleRequestDelete} onSell={handleOpenSellModal} onEdit={handleOpenEditModal} />
                 </div>
+                
+                <div className="animate-fade-in-up mt-8"><TransactionHistoryCard positions={filteredPositions} /></div>
             </div>
-            
-            {isFilterVisible && <div className="mb-6 animate-fade-in-up"><FilterBar onApplyFilters={setFilters} onClearFilters={() => setFilters(initialFilters)} initialFilters={filters} /></div>}
-            
-            <div className="animate-fade-in-up">
-                {isAnalysisVisible && <AnalysisCard analysis={analysis} isLoading={isAnalyzing} error={analysisError} onClose={handleCloseAnalysis} />}
-                <TradeList positions={filteredPositions} originalPositionsCount={positions.length} onDelete={handleRequestDelete} onSell={handleOpenSellModal} onEdit={handleOpenEditModal} />
-            </div>
-            
-            <div className="animate-fade-in-up mt-8"><TransactionHistoryCard positions={filteredPositions} /></div>
-            
-            {/* FIX: Pass the required 'onRequestSecondOpinion' prop to TradeFormModal. */}
-            {isModalOpen && <TradeFormModal onClose={handleCloseModal} onSave={handleSaveTransaction} positionToSellFrom={positionToSell} transactionToEdit={transactionToEdit} baseRiskAmount={baseRiskAmount} customSetupImages={customSetupImages} onRequestSecondOpinion={handleRequestSecondOpinion} />}
-            {/* FIX: Render the SecondOpinionModal when its data is available. */}
-            {secondOpinionData && (
-              <SecondOpinionModal
-                isOpen={isSecondOpinionModalOpen}
-                onClose={handleCloseSecondOpinionModal}
-                ticker={secondOpinionData.ticker}
-                buyReasons={secondOpinionData.buyReasons}
-                chartImage={secondOpinionData.chartImage}
-                analysis={secondOpinionAnalysis}
-                isLoading={isSecondOpinionLoading}
-                error={secondOpinionError}
-              />
-            )}
+            {isModalOpen && <TradeFormModal onClose={handleCloseModal} onSave={handleSaveTransaction} positionToSellFrom={positionToSell} transactionToEdit={transactionToEdit} baseRiskAmount={baseRiskAmount} customSetupImages={customSetupImages} />}
             {positionToDeleteId && <ConfirmDeleteModal onConfirm={handleConfirmDelete} onCancel={handleCancelDelete} positionTicker={positions.find(p => p.id === positionToDeleteId)?.ticker || ''} />}
             {isImportConfirmOpen && <ConfirmImportModal onConfirm={handleConfirmImport} onCancel={handleCancelImport} />}
             {isSettingsModalOpen && <SettingsModal isOpen={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)} customImages={customSetupImages} onCustomImagesChange={setCustomSetupImages} />}

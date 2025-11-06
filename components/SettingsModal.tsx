@@ -138,7 +138,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, customIm
                 </div>
 
                 <div className="flex justify-end pt-6 space-x-3 border-t border-white/10 mt-6 flex-shrink-0">
-                    <button type="button" onClick={onClose} className="px-5 py-2 bg-brand-primary text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors">Done</button>
+                    <button type="button" onClick={onClose} className="px-5 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl">Done</button>
                 </div>
             </div>
         </div>

@@ -27,7 +27,7 @@ const ConfirmImportModal: React.FC<ConfirmImportModalProps> = ({ onConfirm, onCa
         </div>
         <div className="flex justify-end pt-4 space-x-3 border-t border-white/10">
             <button type="button" onClick={onCancel} className="px-5 py-2 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-500 transition-colors">Cancel</button>
-            <button type="button" onClick={onConfirm} className="px-5 py-2 bg-yellow-600 text-white font-semibold rounded-lg shadow-lg shadow-yellow-500/30 transition-all duration-300 hover:bg-yellow-500 transform hover:scale-105">Overwrite and Import</button>
+            <button type="button" onClick={onConfirm} className="px-5 py-2 bg-yellow-600 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:bg-yellow-500">Overwrite and Import</button>
         </div>
       </div>
     </div>

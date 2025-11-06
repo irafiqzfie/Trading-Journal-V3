@@ -224,7 +224,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
               {!isClosed && (
                 <button
                     onClick={() => onSell(position)}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-brand-secondary text-white text-base font-bold rounded-lg shadow-md transition-all duration-300 hover:bg-orange-600 transform hover:scale-105"
+                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white text-base font-bold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                     aria-label={`Sell from ${position.ticker}`}
                 >
                     <DollarIcon className="h-6 w-6" />
