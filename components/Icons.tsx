@@ -6,7 +6,7 @@ export const ChartIcon: React.FC<{className?: string}> = ({className}) => (
   </svg>
 );
 export const LineChartIcon: React.FC = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-brand-accent [filter:drop-shadow(0_0_5px_var(--tw-shadow-color))] shadow-brand-primary/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-brand-accent" style={{ filter: 'drop-shadow(0 0 5px var(--brand-primary))' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
   </svg>
 );

@@ -3,7 +3,7 @@ import React from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AS Trading Journal V1",
+  title: "AS Trading Journal V4",
   description: "A modern trading journal application that helps you log, track, and analyze your trades. It leverages AI to provide insights into your trading habits and decision-making process.",
 };
 
