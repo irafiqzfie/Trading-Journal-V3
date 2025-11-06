@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Position, SellTransaction, BuyTransaction, AnalysisResult, PLSummary, KeyMetrics, Filters } from './types';
@@ -76,6 +77,8 @@ const dummyPositions: Position[] = [
 const App: React.FC = () => {
   const [positions, setPositions] = useLocalStorage<Position[]>('positions', dummyPositions);
   const [isAuthenticated, setIsAuthenticated] = useLocalStorage<boolean>('isAuthenticated', false);
+  
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'positions' | 'history'>('dashboard');
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [positionToSell, setPositionToSell] = useState<Position | null>(null);
@@ -354,6 +357,13 @@ const App: React.FC = () => {
     );
   }
 
+  const tabButtonClasses = (tabName: 'dashboard' | 'positions' | 'history') => 
+    `px-4 py-3 text-lg font-semibold transition-colors duration-200 focus:outline-none ${
+      activeTab === tabName
+        ? 'text-brand-primary border-b-2 border-brand-primary'
+        : 'text-brand-text-secondary hover:text-white'
+    }`;
+
   return (
     <div className="min-h-screen text-brand-text font-sans">
         <Header onExport={handleExportData} onImport={() => fileInputRef.current?.click()} onSettings={() => setIsSettingsModalOpen(true)} onLogout={handleLogout} isAuthenticated={isAuthenticated} />
@@ -361,43 +371,60 @@ const App: React.FC = () => {
             <div className="bg-stone-950/30 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-4 md:p-6 lg:p-8">
                 <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
                 
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-                    <div className="lg:col-span-2"><EquityRiskCard equity={equity} onEquityChange={setEquity} riskPercent={riskPercent} onRiskPercentChange={setRiskPercent} useDynamicEquity={useDynamicEquity} onUseDynamicEquityChange={setUseDynamicEquity} currentEquity={currentEquity} /></div>
-                    <div className="lg:col-span-1"><PLSummaryCard summary={tradeStats.summary} /></div>
-                    <div className="lg:col-span-1"><KeyMetricsCard metrics={tradeStats.metrics} /></div>
-                    <div className="lg:col-span-4"><DailyPLChartCard positions={filteredPositions} /></div>
-                    <div className="lg:col-span-4"><MonthlyPLChartCard positions={filteredPositions} /></div>
-                    <div className="lg:col-span-4"><EquityChartCard positions={filteredPositions} initialEquity={initialEquity} /></div>
+                <div className="flex border-b border-white/10 mb-8">
+                    <button onClick={() => setActiveTab('dashboard')} className={tabButtonClasses('dashboard')}>Dashboard</button>
+                    <button onClick={() => setActiveTab('positions')} className={tabButtonClasses('positions')}>Positions</button>
+                    <button onClick={() => setActiveTab('history')} className={tabButtonClasses('history')}>Trade History</button>
                 </div>
-                
-                <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                    <div className="flex flex-wrap items-center gap-4">
-                        <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">My Positions</h1>
-                        <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-stone-800 text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-brand-primary hover:text-white">
-                            <FilterIcon className="h-4 w-4" />
-                            <span>Filter</span>
-                            {activeFilterCount > 0 && <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-white text-xs font-bold">{activeFilterCount}</span>}
-                        </button>
-                        <div className="hidden sm:block border-l border-white/20 h-8"></div>
-                        <div className="flex gap-3">
-                            <button onClick={handleAnalyze} disabled={isAnalyzing || filteredPositions.length < 1} className="px-4 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:bg-brand-primary/50 disabled:cursor-not-allowed disabled:hover:scale-100">Analyze Habits</button>
-                            <button onClick={handleOpenAddModal} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 animate-pulse-glow"><PlusIcon /> Add Trade</button>
+
+                {activeTab === 'dashboard' && (
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 animate-fade-in">
+                        <div className="lg:col-span-2"><EquityRiskCard equity={equity} onEquityChange={setEquity} riskPercent={riskPercent} onRiskPercentChange={setRiskPercent} useDynamicEquity={useDynamicEquity} onUseDynamicEquityChange={setUseDynamicEquity} currentEquity={currentEquity} /></div>
+                        <div className="lg:col-span-1"><PLSummaryCard summary={tradeStats.summary} /></div>
+                        <div className="lg:col-span-1"><KeyMetricsCard metrics={tradeStats.metrics} /></div>
+                        <div className="lg:col-span-4"><DailyPLChartCard positions={filteredPositions} /></div>
+                        <div className="lg:col-span-4"><MonthlyPLChartCard positions={filteredPositions} /></div>
+                        <div className="lg:col-span-4"><EquityChartCard positions={filteredPositions} initialEquity={initialEquity} /></div>
+                    </div>
+                )}
+
+                {activeTab === 'positions' && (
+                    <div className="animate-fade-in">
+                        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                            <div className="flex flex-wrap items-center gap-4">
+                                <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">My Positions</h1>
+                                <button onClick={() => setIsFilterVisible(!isFilterVisible)} className="relative flex items-center gap-2 px-3 py-1.5 text-sm bg-stone-800 text-brand-text-secondary font-semibold rounded-md transition-colors hover:bg-brand-primary hover:text-white">
+                                    <FilterIcon className="h-4 w-4" />
+                                    <span>Filter</span>
+                                    {activeFilterCount > 0 && <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-white text-xs font-bold">{activeFilterCount}</span>}
+                                </button>
+                                <div className="hidden sm:block border-l border-white/20 h-8"></div>
+                                <div className="flex gap-3">
+                                    <button onClick={handleAnalyze} disabled={isAnalyzing || filteredPositions.length < 1} className="px-4 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl disabled:bg-brand-primary/50 disabled:cursor-not-allowed disabled:hover:scale-100">Analyze Habits</button>
+                                    <button onClick={handleOpenAddModal} className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 animate-pulse-glow"><PlusIcon /> Add Trade</button>
+                                </div>
+                            </div>
+                            <div>
+                                <span className="text-sm text-brand-text-secondary">Filtered Realized P/L</span>
+                                <p className={`text-3xl font-bold ${totalPL >= 0 ? 'text-brand-profit' : 'text-brand-loss'}`}>RM{totalPL.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        
+                        {isFilterVisible && <div className="mb-6 animate-fade-in-up"><FilterBar onApplyFilters={setFilters} onClearFilters={() => setFilters(initialFilters)} initialFilters={filters} /></div>}
+                        
+                        <div className="animate-fade-in-up">
+                            {isAnalysisVisible && <AnalysisCard analysis={analysis} isLoading={isAnalyzing} error={analysisError} onClose={handleCloseAnalysis} />}
+                            <TradeList positions={filteredPositions} originalPositionsCount={positions.length} onDelete={handleRequestDelete} onSell={handleOpenSellModal} onEdit={handleOpenEditModal} />
                         </div>
                     </div>
-                    <div>
-                        <span className="text-sm text-brand-text-secondary">Filtered Realized P/L</span>
-                        <p className={`text-3xl font-bold ${totalPL >= 0 ? 'text-brand-profit' : 'text-brand-loss'}`}>RM{totalPL.toFixed(2)}</p>
+                )}
+
+                {activeTab === 'history' && (
+                    <div className="animate-fade-in">
+                        <TransactionHistoryCard positions={filteredPositions} />
                     </div>
-                </div>
-                
-                {isFilterVisible && <div className="mb-6 animate-fade-in-up"><FilterBar onApplyFilters={setFilters} onClearFilters={() => setFilters(initialFilters)} initialFilters={filters} /></div>}
-                
-                <div className="animate-fade-in-up">
-                    {isAnalysisVisible && <AnalysisCard analysis={analysis} isLoading={isAnalyzing} error={analysisError} onClose={handleCloseAnalysis} />}
-                    <TradeList positions={filteredPositions} originalPositionsCount={positions.length} onDelete={handleRequestDelete} onSell={handleOpenSellModal} onEdit={handleOpenEditModal} />
-                </div>
-                
-                <div className="animate-fade-in-up mt-8"><TransactionHistoryCard positions={filteredPositions} /></div>
+                )}
+
             </div>
             {isModalOpen && <TradeFormModal onClose={handleCloseModal} onSave={handleSaveTransaction} positionToSellFrom={positionToSell} transactionToEdit={transactionToEdit} baseRiskAmount={baseRiskAmount} customSetupImages={customSetupImages} />}
             {positionToDeleteId && <ConfirmDeleteModal onConfirm={handleConfirmDelete} onCancel={handleCancelDelete} positionTicker={positions.find(p => p.id === positionToDeleteId)?.ticker || ''} />}

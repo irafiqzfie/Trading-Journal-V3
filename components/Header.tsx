@@ -13,10 +13,10 @@ const Header: React.FC<HeaderProps> = ({ onExport, onImport, onSettings, onLogou
   return (
     <header className="bg-black/50 backdrop-blur-md border-b border-white/10 sticky top-0 z-40">
       <div className="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
           <LineChartIcon />
-          <h1 className="text-xl font-bold text-white tracking-wider">
-            AS Trading Journal V1
+          <h1 className="text-3xl font-bold text-white tracking-wider [text-shadow:0_0_10px_rgba(249,115,22,0.5)]">
+            AS Trading Journal V4
           </h1>
         </div>
         <div className="flex items-center gap-3">
