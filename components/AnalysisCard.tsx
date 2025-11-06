@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import type { AnalysisResult } from '../types';
 import { CheckCircleIcon, LightBulbIcon, ExclamationIcon, XCircleIcon, CloseIcon } from './Icons';
@@ -24,7 +22,7 @@ const LoadingSkeleton: React.FC = () => (
 
 const AnalysisCard: React.FC<AnalysisCardProps> = ({ analysis, isLoading, error, onClose }) => {
   return (
-    <div className="relative mb-6 bg-stone-900/70 backdrop-blur-lg rounded-lg shadow-lg py-6 pr-6 pl-8 border border-stone-400/20 overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-brand-accent/50">
+    <div className="relative mb-6 bg-white/5 backdrop-blur-lg rounded-lg shadow-lg py-6 pr-6 pl-8 border border-white/10 overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-white/20">
       <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-brand-accent to-brand-primary transition-all duration-500 group-hover:w-2.5"></div>
       <button 
         onClick={onClose} 

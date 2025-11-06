@@ -165,7 +165,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
       {modalImageUrl && (
         <ImageModal src={modalImageUrl} onClose={() => setModalImageUrl(null)} />
       )}
-      <div className="bg-stone-900/60 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-lg transition-all duration-300 ease-in-out relative overflow-hidden group hover:shadow-2xl hover:border-brand-accent/50 hover:-translate-y-1">
+      <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-lg shadow-lg transition-all duration-300 ease-in-out relative overflow-hidden group hover:shadow-2xl hover:border-white/20 hover:-translate-y-1">
         <div className={`absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b ${gradientColor} transition-all duration-500 group-hover:w-2.5`}></div>
         
         <div className="p-4 pl-6">
@@ -306,7 +306,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
                             {sortedBuys.length > 0 ? (() => {
                                 const buy = sortedBuys[currentBuyTxIndex];
                                 return (
-                                  <div key={buy.id} className="bg-black/30 p-3 rounded-lg border border-white/5 group relative h-full flex flex-col justify-between animate-fade-in">
+                                  <div key={buy.id} className="bg-black/20 p-3 rounded-lg border border-white/5 group relative h-full flex flex-col justify-between animate-fade-in">
                                     <div className="flex-grow flex flex-col justify-between">
                                         <div>
                                           <div className="flex justify-between items-center">
@@ -420,7 +420,7 @@ const TradeItem: React.FC<TradeItemProps> = ({ position, onDelete, onSell, onEdi
                           const costOfLots = avgBuyPrice * sell.lotSize * 100;
                           const pl = sell.totalSellPrice - costOfLots;
                           return (
-                            <div key={sell.id} className="bg-black/30 p-3 rounded-lg border border-white/5 group relative h-full flex flex-col justify-between animate-fade-in">
+                            <div key={sell.id} className="bg-black/20 p-3 rounded-lg border border-white/5 group relative h-full flex flex-col justify-between animate-fade-in">
                               <div className="flex-grow flex flex-col justify-between">
                                 {/* Top Section */}
                                 <div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CloseIcon, ExclamationIcon } from './Icons';
 
@@ -10,7 +9,7 @@ interface ConfirmImportModalProps {
 const ConfirmImportModal: React.FC<ConfirmImportModalProps> = ({ onConfirm, onCancel }) => {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title-import" onClick={onCancel}>
-      <div className="bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-2xl p-6 w-full max-w-md m-4 animate-slide-up-fade" onClick={e => e.stopPropagation()}>
+      <div className="bg-stone-900/60 backdrop-blur-lg border border-white/10 rounded-lg shadow-2xl p-6 w-full max-w-md m-4 animate-slide-up-fade" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4">
           <h2 id="modal-title-import" className="text-2xl font-bold text-yellow-400 flex items-center gap-3">
             <ExclamationIcon />

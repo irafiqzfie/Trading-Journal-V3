@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Position, SellTransaction, BuyTransaction, AnalysisResult, PLSummary, KeyMetrics, Filters } from './types';
@@ -433,7 +434,7 @@ Keep the entire analysis brief and to the point.
   
   if (!isAuthenticated) {
     return (
-        <div className="min-h-screen text-brand-text font-sans bg-brand-bg">
+        <div className="min-h-screen text-brand-text font-sans">
             <LoginModal onLogin={handleLogin} />
         </div>
     );

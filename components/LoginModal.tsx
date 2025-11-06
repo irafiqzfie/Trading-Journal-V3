@@ -40,13 +40,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLogin }) => {
     }
   }
 
-  const inputClasses = "mt-1 block w-full bg-stone-900/50 border-2 border-stone-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(249,115,22,0.4)] transition-all duration-200 py-2.5 px-4";
+  const inputClasses = "mt-1 block w-full bg-black/20 border-2 border-stone-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(249,115,22,0.4)] transition-all duration-200 py-2.5 px-4";
   const errorInputClasses = "border-brand-loss focus:border-brand-loss focus:shadow-[0_0_0_3px_rgba(239,68,68,0.4)]";
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div className="fixed inset-0 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div 
-        className="bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-2xl p-6 w-full max-w-sm m-4 animate-slide-up-fade relative"
+        className="bg-stone-900/60 backdrop-blur-lg border border-white/10 rounded-lg shadow-2xl p-6 w-full max-w-sm m-4 animate-slide-up-fade relative"
       >
         <div className="text-center mb-6">
             <LineChartIcon />

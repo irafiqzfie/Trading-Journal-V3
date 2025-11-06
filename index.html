@@ -6,7 +6,7 @@
     <title>AS Trading Journal</title>
     <style>
       :root {
-        --brand-bg: #1c1917; /* stone-900 */
+        --brand-bg: #0c0a09; /* stone-950 */
         --brand-primary: #f97316; /* orange-500 */
         --brand-secondary: #fb923c; /* orange-400 */
         --brand-accent: #f97316; /* orange-500 */
@@ -14,13 +14,34 @@
         --brand-text-secondary: #a8a29e; /* stone-400 */
         --brand-profit: #4ade80;
         --brand-loss: #f87171;
+        --background-image-url: url('https://images.unsplash.com/photo-1513407030348-c983a97b98d8?q=80&w=2072&auto=format&fit=crop');
       }
       body {
-        background-color: var(--brand-bg);
-        background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        overflow: auto;
+        background-color: transparent !important;
+      }
+      html::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background-image: var(--background-image-url);
         background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
+        background-position: center center;
+        transform: scale(1.05);
+        filter: grayscale(0.3) brightness(0.7);
+      }
+      html::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background-image: 
+          radial-gradient(at 20% 25%, hsla(220, 50%, 40%, 0.1) 0px, transparent 50%),
+          radial-gradient(at 80% 70%, hsla(30, 60%, 40%, 0.1) 0px, transparent 50%),
+          linear-gradient(to bottom, rgba(12, 10, 9, 0.4), rgba(12, 10, 9, 0.85));
+        -webkit-backdrop-filter: blur(8px) saturate(0.9);
+        backdrop-filter: blur(8px) saturate(0.9);
       }
     </style>
     <script>
@@ -105,7 +126,7 @@
 }
 </script>
 </head>
-<body class="bg-brand-bg">
+<body class="text-brand-text font-sans">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

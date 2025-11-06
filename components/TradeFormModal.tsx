@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { Position, BuyTransaction, SellTransaction } from '../types';
 import { CloseIcon, CalendarIcon, ImageIcon, TrashIcon, SparklesIcon } from './Icons';
@@ -463,7 +460,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
     setImageTooltip(prev => ({ ...prev, visible: false }));
   };
   
-  const inputClasses = "mt-1 block w-full bg-stone-900/50 border-2 border-stone-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(249,115,22,0.4)] transition-all duration-200 py-2 px-3";
+  const inputClasses = "mt-1 block w-full bg-black/20 border-2 border-stone-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(249,115,22,0.4)] transition-all duration-200 py-2 px-3";
 
   const filteredSetups = useMemo(() => buySetups.filter(s => !buyReason.includes(s.name) && s.name.toLowerCase().includes(setupSearchTerm.toLowerCase())), [buyReason, setupSearchTerm]);
   const handleAddSetup = (setupName: string) => { setBuyReason(prev => [...prev, setupName]); setSetupSearchTerm(''); };
@@ -571,7 +568,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
 
   const renderBuyForm = () => {
     const gliderClass = { 'S': 'translate-x-0', 'A+': 'translate-x-full', 'A': 'translate-x-[200%]' }[setupRating];
-    const calcBoxBase = "p-2 rounded-md text-center bg-black/30";
+    const calcBoxBase = "p-2 rounded-md text-center bg-black/20";
     const calcLabel = "text-xs text-slate-400 block";
     const calcValue = "font-semibold text-white text-lg";
     const riskValue = "font-semibold text-brand-accent text-lg";
@@ -633,7 +630,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
 
             <div>
                 <label className="block text-sm font-medium text-brand-text-secondary mb-2">Setup Rating (Auto)</label>
-                <div className="relative flex bg-black/30 rounded-lg p-1 w-full">
+                <div className="relative flex bg-black/20 rounded-lg p-1 w-full">
                     <div className={`absolute top-1 bottom-1 left-1 w-1/3 bg-brand-primary rounded-md transition-transform duration-300 ease-in-out shadow-lg shadow-brand-primary/30 ${gliderClass}`} />
                     <div className="relative z-10 flex-1 px-4 py-2 text-sm font-bold text-white text-center">S</div>
                     <div className="relative z-10 flex-1 px-4 py-2 text-sm font-bold text-white text-center">A+</div>
@@ -729,7 +726,7 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
           </div>
         </div>
         <div className="mt-6">
-            <div className="bg-black/25 p-4 rounded-lg">
+            <div className="bg-black/10 p-4 rounded-lg">
               <h3 className="text-sm font-semibold text-brand-text-secondary mb-3 text-center">Position Details</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
                    <div key={`trade-risk-${tradeRiskAmount}-${setupRating}`} className={`${calcBoxBase} animate-value-flash`}>
@@ -771,146 +768,144 @@ const TradeFormModal: React.FC<TradeFormModalProps> = ({ onClose, onSave, positi
   };
 
   const renderSellForm = () => {
-      const sellReasonGliderClass = { 'TP': 'translate-x-0', 'Cut Loss': 'translate-x-full', '': 'opacity-0' }[sellReason];
+    const sellReasonGliderClass = { 'TP': 'translate-x-0', 'Cut Loss': 'translate-x-full', '': 'opacity-0' }[sellReason];
 
-      return (
-        <>
-          <div className="bg-black/30 p-3 rounded-md mb-4">
-              <h3 className="text-lg font-bold text-white">{positionToSellFrom?.ticker.toUpperCase()}</h3>
-              <p className="text-sm text-brand-text-secondary">Avg. Buy Price: RM{avgBuyPrice.toFixed(3)}</p>
-              <p className="text-base font-semibold text-yellow-400 mt-1">{remainingLots} {remainingLots === 1 ? 'lot' : 'lots'} available</p>
-          </div>
+    return (
+      <>
+        <div className="bg-black/20 p-3 rounded-md mb-4">
+            <h3 className="text-lg font-bold text-white">{positionToSellFrom?.ticker.toUpperCase()}</h3>
+            <p className="text-sm text-brand-text-secondary">Avg. Buy Price: RM{avgBuyPrice.toFixed(3)}</p>
+            <p className="text-base font-semibold text-yellow-400 mt-1">{remainingLots} {remainingLots === 1 ? 'lot' : 'lots'} available</p>
+        </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-4">
-            {/* Left Column */}
-            <div className="flex flex-col h-full space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="sellLotSize" className="block text-sm font-medium text-brand-text-secondary">Sell Lot Size</label>
-                  <div className="relative mt-1">
-                    <input type="number" id="sellLotSize" value={sellLotSize} onChange={e => setSellLotSize(e.target.value)} min="1" max={remainingLots} className={`${inputClasses} pr-28`} />
-                    <div className="absolute inset-y-0 right-0 flex items-center divide-x divide-stone-600">
-                         <button type="button" onClick={() => {
-                                const halfLots = Math.floor(remainingLots / 2);
-                                if (halfLots > 0) setSellLotSize(halfLots.toString());
-                            }} className="px-3 text-xs font-bold text-brand-accent hover:text-orange-400" aria-label="Set half sell lot size">1/2</button>
-                        <button type="button" onClick={() => setSellLotSize(remainingLots.toString())} className="px-3 text-xs font-bold text-brand-accent hover:text-orange-400" aria-label="Set maximum sell lot size">MAX</button>
-                    </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-4">
+          {/* Left Column */}
+          <div className="flex flex-col h-full space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="sellLotSize" className="block text-sm font-medium text-brand-text-secondary">Sell Lot Size</label>
+                <div className="relative mt-1">
+                  <input type="number" id="sellLotSize" value={sellLotSize} onChange={e => setSellLotSize(e.target.value)} min="1" max={remainingLots} className={`${inputClasses} pr-28`} />
+                  <div className="absolute inset-y-0 right-0 flex items-center divide-x divide-stone-600">
+                       <button type="button" onClick={() => {
+                              const halfLots = Math.floor(remainingLots / 2);
+                              if (halfLots > 0) setSellLotSize(halfLots.toString());
+                          }} className="px-3 text-xs font-bold text-brand-accent hover:text-orange-400" aria-label="Set half sell lot size">1/2</button>
+                      <button type="button" onClick={() => setSellLotSize(remainingLots.toString())} className="px-3 text-xs font-bold text-brand-accent hover:text-orange-400" aria-label="Set maximum sell lot size">MAX</button>
                   </div>
-                  {errors.sellLotSize && <p className="text-red-400 text-xs mt-1">{errors.sellLotSize}</p>}
                 </div>
-                <div>
-                  <label htmlFor="sellPrice" className="block text-sm font-medium text-brand-text-secondary">Sell Price (per unit)</label>
-                  <input type="number" id="sellPrice" value={sellPrice} onChange={e => setSellPrice(e.target.value)} step="0.01" className={inputClasses} />
-                  {errors.sellPrice && <p className="text-red-400 text-xs mt-1">{errors.sellPrice}</p>}
-                </div>
+                {errors.sellLotSize && <p className="text-red-400 text-xs mt-1">{errors.sellLotSize}</p>}
               </div>
               <div>
-                <label htmlFor="sellDate" className="block text-sm font-medium text-brand-text-secondary">Sell Date</label>
-                <div className="relative">
-                    <input type="date" id="sellDate" value={sellDate} onChange={e => setSellDate(e.target.value)} className={`${inputClasses} pr-24`} />
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <button type="button" onClick={() => setSellDate(new Date().toISOString().split('T')[0])} className="text-xs font-semibold text-brand-accent hover:text-orange-400 px-2 pointer-events-auto">TODAY</button>
-                        <CalendarIcon className="h-5 w-5 text-slate-400" />
-                    </div>
-                  </div>
-                {errors.sellDate && <p className="text-red-400 text-xs mt-1">{errors.sellDate}</p>}
-              </div>
-              <div className="flex-grow" />
-              <div>
-                <label className="block text-sm font-medium text-brand-text-secondary">Total Sell Amount</label>
-                <div className={`mt-1 text-2xl font-semibold text-brand-accent bg-black/40 px-3 py-4 rounded-md ${!sellPrice ? 'opacity-50' : ''}`}>RM{totalSellPrice.toFixed(2)}</div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-brand-text-secondary mb-2">Sell Reason</label>
-                <div className="relative flex bg-black/30 rounded-lg p-1 w-full">
-                    <div className={`absolute top-1 bottom-1 left-1 w-1/2 bg-brand-primary rounded-md transition-all duration-300 ease-in-out shadow-lg shadow-brand-primary/30 ${sellReasonGliderClass}`} />
-                    <button type="button" onClick={() => setSellReason('TP')} className="relative z-10 flex-1 px-4 py-2 text-sm font-semibold text-white">TP</button>
-                    <button type="button" onClick={() => setSellReason('Cut Loss')} className="relative z-10 flex-1 px-4 py-2 text-sm font-semibold text-white">Cut Loss</button>
-                </div>
-                {errors.sellReason && <p className="text-red-400 text-xs mt-1">{errors.sellReason}</p>}
+                <label htmlFor="sellPrice" className="block text-sm font-medium text-brand-text-secondary">Sell Price (per unit)</label>
+                <input type="number" id="sellPrice" value={sellPrice} onChange={e => setSellPrice(e.target.value)} step="0.01" className={inputClasses} />
+                {errors.sellPrice && <p className="text-red-400 text-xs mt-1">{errors.sellPrice}</p>}
               </div>
             </div>
-            {/* Right Column */}
-            <div className="space-y-4 flex flex-col">
-                <div className="flex-grow flex flex-col">
-                  <label className="block text-sm font-medium text-brand-text-secondary">Sell Chart (Optional)</label>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if(file) handleFileUpload(file, setSellChartImage)
-                    }}
-                    accept="image/png, image/jpeg, image/gif"
-                    className="hidden"
-                />
-                <ImageDropzone 
-                    chartImage={sellChartImage}
-                    onImageChange={setSellChartImage}
-                    fileInputRef={fileInputRef}
-                    onDrop={(e) => handleDrop(e, setSellChartImage)}
-                />
+            
+            <div>
+              <label htmlFor="sellDate" className="block text-sm font-medium text-brand-text-secondary">Sell Date</label>
+              <div className="relative">
+                <input type="date" id="sellDate" value={sellDate} onChange={e => setSellDate(e.target.value)} className={`${inputClasses} pr-24`} />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                   <button type="button" onClick={() => setSellDate(new Date().toISOString().split('T')[0])} className="text-xs font-semibold text-brand-accent hover:text-orange-400 px-2 pointer-events-auto">TODAY</button>
+                   <CalendarIcon className="h-5 w-5 text-slate-400" />
                 </div>
-                <div>
-                  <label htmlFor="notes" className="block text-sm font-medium text-brand-text-secondary">Notes / Lesson Learnt (Optional)</label>
-                  <textarea
-                    id="notes"
-                    value={transactionNotes}
-                    onChange={e => setTransactionNotes(e.target.value)}
-                    rows={4}
-                    className={inputClasses}
-                    placeholder="e.g., Should have taken profit earlier based on resistance..."
-                  />
-                </div>
+              </div>
+              {errors.sellDate && <p className="text-red-400 text-xs mt-1">{errors.sellDate}</p>}
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-brand-text-secondary mb-2">Sell Reason (Auto)</label>
+              <div className="relative flex bg-black/20 rounded-lg p-1 w-full">
+                  <div className={`absolute top-1 bottom-1 left-1 w-1/2 bg-gradient-to-r rounded-md transition-transform duration-300 ease-in-out shadow-lg ${sellReason === 'TP' ? 'from-green-500 to-teal-500 shadow-green-500/30' : 'from-red-500 to-rose-500 shadow-red-500/30'} ${sellReasonGliderClass}`} />
+                  <div className="relative z-10 flex-1 px-4 py-2 text-sm font-bold text-white text-center">Take Profit</div>
+                  <div className="relative z-10 flex-1 px-4 py-2 text-sm font-bold text-white text-center">Cut Loss</div>
+              </div>
+              {errors.sellReason && <p className="text-red-400 text-xs mt-1">{errors.sellReason}</p>}
+            </div>
+
+          </div>
+          
+          {/* Right Column */}
+          <div className="space-y-4 flex flex-col">
+            <div>
+              <label htmlFor="transactionNotes" className="block text-sm font-medium text-brand-text-secondary">Lesson Learnt (Optional)</label>
+              <textarea
+                id="transactionNotes"
+                value={transactionNotes}
+                onChange={e => setTransactionNotes(e.target.value)}
+                rows={2}
+                className={inputClasses}
+                placeholder="e.g., Should have taken profit earlier, entry was too late..."
+              />
+            </div>
+            <div className="flex-grow flex flex-col">
+              <label className="block text-sm font-medium text-brand-text-secondary">Chart Image (Optional)</label>
+               <input type="file" ref={fileInputRef} onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFileUpload(file, setSellChartImage) }} accept="image/*" className="hidden" />
+              <ImageDropzone 
+                  chartImage={sellChartImage}
+                  onImageChange={setSellChartImage}
+                  fileInputRef={fileInputRef}
+                  onDrop={(e) => handleDrop(e, setSellChartImage)}
+              />
             </div>
           </div>
-        </>
-      )
+        </div>
+        <div className="mt-6">
+          <div className="bg-black/10 p-4 rounded-lg text-center">
+            <h3 className="text-sm font-semibold text-brand-text-secondary mb-2">Transaction Summary</h3>
+             <p className="text-sm text-brand-text-secondary">Total Sell Price</p>
+             <p className="text-3xl font-bold text-white">RM{totalSellPrice.toFixed(2)}</p>
+          </div>
+        </div>
+      </>
+    );
   };
-
-  const modalTitle = `${isEditing ? 'Edit' : 'Add'} ${isSellMode ? 'Sell Transaction' : 'New Trade'}`;
-  const saveButtonText = `${isEditing ? 'Update' : 'Save'} ${isSellMode ? 'Sell' : 'Trade'}`;
-  const canRequestSecondOpinion = !isSellMode && !isEditing && !!ticker && buyReason.length > 0 && !!buyChartImage;
+  
+  const canRequestSecondOpinion = !isSellMode && ticker && buyReason.length > 0 && buyChartImage;
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={onClose}>
       {renderImageTooltip()}
       <div 
-        className={`bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-2xl p-6 w-full ${isSellMode ? 'max-w-3xl' : 'max-w-4xl'} m-4 animate-slide-up-fade max-h-[95vh] overflow-y-auto`} 
+        className="bg-stone-900/60 backdrop-blur-lg border border-white/10 rounded-lg shadow-2xl p-6 w-full max-w-5xl m-4 animate-slide-up-fade max-h-[90vh] flex flex-col"
         onClick={e => e.stopPropagation()}
         onPaste={handlePaste}
       >
-        <div className="flex justify-between items-center mb-6">
-          <h2 id="modal-title" className="text-2xl font-bold text-white">{modalTitle}</h2>
+        <div className="flex justify-between items-center mb-4 flex-shrink-0">
+          <h2 id="modal-title" className="text-2xl font-bold text-white">
+            {isEditing ? `Edit ${transactionToEdit?.type === 'buy' ? 'Buy' : 'Sell'} Transaction` : isSellMode ? 'Add Sell Transaction' : 'Add New Position'}
+          </h2>
           <button onClick={onClose} className="p-1 rounded-full text-brand-text-secondary hover:bg-white/10" aria-label="Close modal">
             <CloseIcon />
           </button>
         </div>
-        <form onSubmit={handleSubmit}>
-          
+        
+        <form onSubmit={handleSubmit} noValidate className="flex-grow overflow-y-auto pr-2 -mr-2">
           {isSellMode ? renderSellForm() : renderBuyForm()}
-
-          <div className="flex justify-between items-center pt-6 border-t border-white/10 mt-6">
-            <div>
-              {!isSellMode && !isEditing && (
-                 <button
-                    type="button"
-                    onClick={() => onRequestSecondOpinion({ ticker, buyReasons: buyReason, chartImage: buyChartImage! })}
-                    disabled={!canRequestSecondOpinion}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-brand-secondary text-white rounded-lg shadow-md transition-all duration-300 hover:enabled:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed group"
-                 >
-                    <SparklesIcon className="h-5 w-5 transition-transform group-hover:enabled:rotate-12" />
-                    Get Second Opinion
-                 </button>
-              )}
-            </div>
-            <div className="flex items-center space-x-3">
-              <button type="button" onClick={onClose} className="px-5 py-2 bg-stone-600 text-white font-semibold rounded-lg hover:bg-stone-500 transition-colors">Cancel</button>
-              <button type="submit" className="px-5 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg transition-all duration-300 hover:shadow-brand-primary/50 transform hover:scale-105 hover:bg-orange-600">{saveButtonText}</button>
-            </div>
-          </div>
         </form>
+
+        <div className="flex flex-col sm:flex-row justify-between items-center pt-4 space-x-3 border-t border-white/10 mt-4 flex-shrink-0">
+            { !isSellMode ? (
+                <button
+                    type="button"
+                    onClick={() => canRequestSecondOpinion && onRequestSecondOpinion({ ticker, buyReasons: buyReason, chartImage: buyChartImage! })}
+                    disabled={!canRequestSecondOpinion}
+                    className="flex items-center gap-2 px-4 py-2 bg-transparent border-2 border-purple-500 text-purple-400 font-semibold rounded-lg shadow-md transition-all duration-300 hover:bg-purple-500 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto mb-2 sm:mb-0"
+                >
+                    <SparklesIcon className="h-5 w-5"/>
+                    Get AI Second Opinion
+                </button>
+            ) : <div /> /* Placeholder to keep layout consistent */ }
+
+            <div className="flex gap-3 w-full sm:w-auto">
+              <button type="button" onClick={onClose} className="flex-1 sm:flex-none px-5 py-2 bg-slate-600 text-white font-semibold rounded-lg hover:bg-slate-500 transition-colors">Cancel</button>
+              <button type="submit" onClick={handleSubmit} className="flex-1 sm:flex-none px-5 py-2 bg-brand-primary text-white font-semibold rounded-lg shadow-lg shadow-brand-primary/30 transition-all duration-300 hover:bg-orange-600 transform hover:scale-105">
+                {isEditing ? 'Save Changes' : 'Add Transaction'}
+              </button>
+            </div>
+        </div>
       </div>
     </div>
   );

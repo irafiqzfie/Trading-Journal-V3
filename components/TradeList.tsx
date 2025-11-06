@@ -15,7 +15,7 @@ const TradeList: React.FC<TradeListProps> = ({ positions, originalPositionsCount
 
   if (positions.length === 0) {
     return (
-      <div className="text-center py-16 px-6 bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-lg">
+      <div className="text-center py-16 px-6 bg-white/5 backdrop-blur-lg border border-white/10 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold text-white">
           {originalPositionsCount > 0 ? 'No Matching Positions' : 'No Positions Yet'}
         </h2>

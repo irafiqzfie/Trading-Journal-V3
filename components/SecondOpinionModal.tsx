@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useRef } from 'react';
 import { CloseIcon, SparklesIcon, XCircleIcon } from './Icons';
 
@@ -78,7 +76,7 @@ const SecondOpinionModal: React.FC<SecondOpinionModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity duration-300 animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title-opinion" onClick={onClose}>
       <div 
-        className="bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg shadow-2xl p-6 w-full max-w-4xl m-4 animate-slide-up-fade max-h-[90vh] flex flex-col"
+        className="bg-stone-900/60 backdrop-blur-lg border border-white/10 rounded-lg shadow-2xl p-6 w-full max-w-4xl m-4 animate-slide-up-fade max-h-[90vh] flex flex-col"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4 flex-shrink-0">
@@ -94,20 +92,20 @@ const SecondOpinionModal: React.FC<SecondOpinionModalProps> = ({
         <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 min-h-0">
             {/* Left Column: Setup Info */}
             <div className="flex flex-col gap-4">
-                <div className="bg-black/30 p-3 rounded-lg">
+                <div className="bg-black/20 p-3 rounded-lg">
                     <h3 className="font-bold text-xl text-white">{ticker.toUpperCase()}</h3>
                     <p className="text-sm text-brand-text-secondary">Entry Reasons:</p>
                     <ul className="text-sm list-disc list-inside mt-1">
                         {buyReasons.map(r => <li key={r}>{r}</li>)}
                     </ul>
                 </div>
-                <div className="flex-grow bg-black/30 rounded-lg p-2 flex items-center justify-center">
+                <div className="flex-grow bg-black/20 rounded-lg p-2 flex items-center justify-center">
                     <img src={chartImage} alt={`Chart for ${ticker}`} className="max-w-full max-h-full object-contain rounded-md" />
                 </div>
             </div>
 
             {/* Right Column: AI Analysis */}
-            <div ref={contentRef} className="bg-black/30 p-4 rounded-lg overflow-y-auto">
+            <div ref={contentRef} className="bg-black/20 p-4 rounded-lg overflow-y-auto">
                 <AnalysisContent />
             </div>
         </div>

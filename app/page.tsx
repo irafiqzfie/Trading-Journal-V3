@@ -620,7 +620,7 @@ const HomePage: React.FC = () => {
   
   if (!isAuthenticated) {
     return (
-        <div className="min-h-screen bg-brand-bg text-brand-text font-sans">
+        <div className="min-h-screen text-brand-text font-sans">
             <LoginModal onLogin={handleLogin} />
         </div>
     );
@@ -628,7 +628,7 @@ const HomePage: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text font-sans">
+    <div className="min-h-screen text-brand-text font-sans">
       <Header onExport={handleExportData} onImport={() => fileInputRef.current?.click()} onSettings={() => setIsSettingsModalOpen(true)} onLogout={handleLogout} isAuthenticated={isAuthenticated} />
       <main className="container mx-auto p-4 md:p-6 lg:p-8">
         <input

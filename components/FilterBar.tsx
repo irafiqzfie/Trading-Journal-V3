@@ -55,11 +55,11 @@ const FilterBar: React.FC<FilterBarProps> = ({ onApplyFilters, onClearFilters, i
         setFilters(prev => ({...prev, setups: prev.setups.filter(s => s !== setupToRemove)}));
     };
     
-    const inputClasses = "block w-full bg-stone-950/70 border-2 border-stone-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(249,115,22,0.3)] transition-all duration-200 py-2 px-3 text-sm";
+    const inputClasses = "block w-full bg-black/20 border-2 border-stone-700 rounded-md shadow-sm text-white focus:ring-0 focus:border-brand-primary focus:shadow-[0_0_0_3px_rgba(249,115,22,0.3)] transition-all duration-200 py-2 px-3 text-sm";
     const labelClasses = "block text-xs font-medium text-brand-text-secondary mb-1";
     
     return (
-        <div className="bg-stone-900/70 backdrop-blur-lg border border-stone-400/20 rounded-lg p-4">
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-lg p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                 {/* Ticker */}
                 <div>
