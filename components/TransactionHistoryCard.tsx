@@ -1,14 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import type { Position } from '../types';
-import { ChevronDownIcon, ClipboardListIcon } from './Icons';
+import { ClipboardListIcon } from './Icons';
 
 interface TransactionHistoryCardProps {
   positions: Position[];
 }
 
 const TransactionHistoryCard: React.FC<TransactionHistoryCardProps> = ({ positions }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-
     const transactions = useMemo(() => {
         const allTransactions = positions.flatMap(p => {
             const buyTransactions = p.buys.map(b => ({
@@ -40,10 +38,7 @@ const TransactionHistoryCard: React.FC<TransactionHistoryCardProps> = ({ positio
 
     return (
         <div
-          className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-lg shadow-lg relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-white/20 cursor-pointer"
-          onClick={() => setIsExpanded(!isExpanded)}
-          role="button"
-          aria-expanded={isExpanded}
+          className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-lg shadow-lg relative overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 hover:border-white/20"
         >
             <div className="absolute top-0 left-0 h-full w-1.5 bg-gradient-to-b from-brand-accent to-brand-primary transition-all duration-500 group-hover:w-2.5"></div>
             <div className="p-4 pl-6">
@@ -52,12 +47,9 @@ const TransactionHistoryCard: React.FC<TransactionHistoryCardProps> = ({ positio
                         <ClipboardListIcon className="w-7 h-7 text-brand-accent" />
                         <h2 className="text-xl font-bold text-white">Transaction History</h2>
                     </div>
-                    <div className="flex items-center gap-4">
-                         <ChevronDownIcon className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
-                     </div>
                 </div>
 
-                <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[30rem] mt-4' : 'max-h-0'}`}>
+                <div className="mt-4">
                     {transactions.length > 0 ? (
                         <div className="max-h-96 overflow-y-auto pr-2">
                             <table className="w-full text-sm text-left text-brand-text-secondary">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { CloseIcon, LineChartIcon } from './Icons';
+import { CloseIcon } from './Icons';
+import Logo from './Logo';
 
 interface LoginModalProps {
   onLogin: (id: string, pass: string) => void;
@@ -49,8 +50,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLogin }) => {
         className="bg-stone-900/60 backdrop-blur-lg border border-white/10 rounded-lg shadow-2xl p-6 w-full max-w-sm m-4 animate-slide-up-fade relative"
       >
         <div className="text-center mb-6">
-            <LineChartIcon />
-            <h2 id="modal-title" className="text-2xl font-bold text-white mt-2">Trading Journal Login</h2>
+            <Logo className="h-20 w-20 mx-auto" />
+            <h2 id="modal-title" className="text-2xl font-bold text-white mt-2">AS Trading Journal</h2>
         </div>
         <form onSubmit={handleSubmit} noValidate>
             {errors.form && (

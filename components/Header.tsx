@@ -1,5 +1,6 @@
 import React from 'react';
-import { LineChartIcon, ExportIcon, ImportIcon, SettingsIcon } from './Icons';
+import { ExportIcon, ImportIcon, SettingsIcon } from './Icons';
+import Logo from './Logo';
 
 interface HeaderProps {
     onExport: () => void;
@@ -14,8 +15,8 @@ const Header: React.FC<HeaderProps> = ({ onExport, onImport, onSettings, onLogou
     <header className="bg-black/50 backdrop-blur-md border-b border-white/10 sticky top-0 z-40">
       <div className="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          <LineChartIcon />
-          <h1 className="text-2xl font-bold text-white tracking-wider" style={{ textShadow: '0 0 8px rgba(249, 115, 22, 0.5)' }}>
+          <Logo className="h-10 w-10" />
+          <h1 className="text-xl font-bold text-white tracking-wider">
             AS Trading Journal V4
           </h1>
         </div>
